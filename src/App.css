@@ -1,0 +1,7 @@
+/* Dans ton fichier styles.css */
+body {
+  background-color: #040911; /* Un joli bleu foncé moderne */
+  color: #ffffff; /* Texte en blanc pour qu'il soit lisible */
+  margin: 0;
+  height: 100vh;
+}
