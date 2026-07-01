@@ -8,7 +8,8 @@ export default function Register() {
   const [register, { isLoading }] = useRegisterMutation();
 
   const [form, setForm] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -18,8 +19,11 @@ export default function Register() {
 
   function validate() {
     const newErrors = {};
-    if (!form.name.trim()) {
-      newErrors.name = "Le nom est obligatoire.";
+    if (!form.first_name.trim()) {
+      newErrors.first_name = "Le prénom est obligatoire.";
+    }
+    if (!form.last_name.trim()) {
+      newErrors.last_name = "Le nom est obligatoire.";
     }
     if (!form.email.trim()) {
       newErrors.email = "L'email est obligatoire.";
@@ -52,7 +56,7 @@ export default function Register() {
     try {
       const { confirmPassword, ...payload } = form;
       await register(payload).unwrap();
-      navigate("/login"); // TODO: ajuster la redirection post-inscription
+      navigate("/login"); 
     } catch (err) {
       setApiError(
         err?.data?.message || "Inscription impossible. Réessaie plus tard.",
@@ -91,27 +95,50 @@ export default function Register() {
           )}
 
           <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-            {/* Nom */}
-            <div>
-              <label className="block text-sm text-white/70 mb-1.5">
-                Nom complet
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Ton nom"
-                  className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white placeholder:text-white/30 outline-none focus:ring-2 focus:ring-indigo-500 transition ${
-                    errors.name ? "border-rose-500/50" : "border-white/10"
-                  }`}
-                />
+            
+            {/* Prénom & Nom sur la même ligne (optionnel pour le design) */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Prénom */}
+              <div>
+                <label className="block text-sm text-white/70 mb-1.5">Prénom</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={form.first_name}
+                    onChange={handleChange}
+                    placeholder="John"
+                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white placeholder:text-white/30 outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+                      errors.first_name ? "border-rose-500/50" : "border-white/10"
+                    }`}
+                  />
+                </div>
+                {errors.first_name && (
+                  <p className="text-rose-400 text-xs mt-1">{errors.first_name}</p>
+                )}
               </div>
-              {errors.name && (
-                <p className="text-rose-400 text-xs mt-1">{errors.name}</p>
-              )}
+
+              {/* Nom */}
+              <div>
+                <label className="block text-sm text-white/70 mb-1.5">Nom</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={form.last_name}
+                    onChange={handleChange}
+                    placeholder="Doe"
+                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white placeholder:text-white/30 outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+                      errors.last_name ? "border-rose-500/50" : "border-white/10"
+                    }`}
+                  />
+                </div>
+                {errors.last_name && (
+                  <p className="text-rose-400 text-xs mt-1">{errors.last_name}</p>
+                )}
+              </div>
             </div>
 
             {/* Email */}

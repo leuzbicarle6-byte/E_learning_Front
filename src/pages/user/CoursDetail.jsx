@@ -1,59 +1,103 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
-  useGetCourseByIdQuery, // 🌟 Changé ici
+  useGetCourseByIdQuery,
   useCompleteCourseMutation,
 } from "../../backend/features/courses/coursesApi";
-import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
-import ModuleOrdinateur from "../../components/user/modules/ModuleOrdinateur";
+import { Loader2, Timer, Lock } from "lucide-react";
 import Quiz from "../../components/quiz/Quiz";
-// import Quiz from "../../components/quiz/Quiz";
+
+import CourseHeader from "../../components/courses/CourseHeader";
+import CourseSidebar from "../../components/courses/CourseSidebar";
+import TabMere from "../../components/courses/TabMere";
 
 export default function CoursDetail() {
-  const { id } = useParams(); // 🌟 Récupère l'id de l'URL au lieu du slug
-  const { data: course, isLoading, isError } = useGetCourseByIdQuery(id); // 🌟 Utilise le hook par ID
+  const { id } = useParams();
 
-  console.log("");
-
+  const {
+    data: course,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetCourseByIdQuery(id);
   const [updateProgress, { isLoading: isSaving }] = useCompleteCourseMutation();
+
   const [localProgress, setLocalProgress] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isQuizUnlocked, setIsQuizUnlocked] = useState(false);
+
   const realCourse = Array.isArray(course) ? course[0] : course;
 
+  // 1. Initialisation et déclenchement du chrono en BDD
   useEffect(() => {
     if (realCourse) {
       setLocalProgress(realCourse.user_progress || 0);
-    }
-  }, [realCourse]);
+      setIsQuizUnlocked(realCourse.is_quiz_unlocked || false);
+      setTimeLeft(realCourse.time_remaining || 0);
 
-  const handleQuizPassed = () => {
-    setLocalProgress(100);
+      // SÉCURITÉ CRUCIALE : Si user_progress est à 0 et qu'il reste 3600s,
+      // cela signifie que l'utilisateur ouvre le cours pour la toute première fois.
+      // On envoie une requête rapide pour créer la ligne en BDD et lancer le "started_at" officiel.
+      if (
+        realCourse.user_progress === 0 &&
+        realCourse.time_remaining === 60 &&
+        !realCourse.is_quiz_unlocked
+      ) {
+        updateProgress({ id: id, progress_percentage: 1 })
+          .unwrap()
+          .then(() => refetch()); // On rafraîchit pour récupérer le vrai "time_remaining" du serveur
+      }
+    }
+  }, [realCourse, id, updateProgress, refetch]);
+
+  // 2. Compte à rebours visuel (Front-end) pour animer le chrono seconde par seconde
+  useEffect(() => {
+    if (timeLeft <= 0 || isQuizUnlocked) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsQuizUnlocked(true);
+          refetch(); // On valide définitivement auprès du serveur que le temps est écoulé
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft, isQuizUnlocked, refetch]);
+
+  // Formater les secondes (ex: 3600 -> 01h 00m 00s ou 59m 30s)
+  const formatTime = (seconds) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${h > 0 ? `${h}h ` : ""}${m.toString().padStart(2, "0")}m ${s.toString().padStart(2, "0")}s`;
   };
 
-  // 🌟 CONFIGURATION DU ROUTAGE DES COMPOSANTS
-  // On se base sur le titre ou une autre propriété stable reçue du backend
-  // pour éviter de lier l'affichage à un ID numérique instable.
+  const handleQuizPassed = async () => {
+    setLocalProgress(100);
+    try {
+      await updateProgress({ id: id, progress_percentage: 100 }).unwrap();
+    } catch (err) {
+      console.error("Erreur lors de la validation du cours :", err);
+    }
+  };
+
   const renderCourseContent = () => {
     if (!realCourse) return null;
 
-    // Génère la clé en remplaçant tout ce qui n'est pas alphanumérique par un tiret
     const courseTitleKey = realCourse.title
       ?.toLowerCase()
-      .replace(/[^a-z0-9]/g, "-") // Remplace l'apostrophe et les espaces par des tirets
-      .replace(/-+/g, "-") // Nettoie les doubles tirets cachés comme "--"
-      .replace(/^-+|-+$/g, ""); // Enlève les tirets au début et à la fin
-
-    console.log("Clé générée pour le switch :", courseTitleKey); // Devrait afficher "qu-est-une-machine"
+      .replace(/[^a-z0-9]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "");
 
     switch (courseTitleKey) {
-      // 🌟 Mis à jour avec la clé exacte générée par le titre de ta base de données !
       case "qu-est-une-machine":
-        return <ModuleOrdinateur />;
-
-      // Exemple pour tes futurs modules :
-      // Si le titre est "Initiation à Excel", la clé sera "initiation-a-excel"
-      // case "initiation-a-excel":
-      //   return <ModuleExcel />;
-
+        return <TabMere />;
       default:
         return (
           <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3">
@@ -66,102 +110,60 @@ export default function CoursDetail() {
     }
   };
 
-  const handleCompleteCourse = async () => {
-    try {
-      // 🌟 On envoie l'id au lieu du slug
-      await updateProgress({ id: id, progress_percentage: 100 }).unwrap();
-      setLocalProgress(100);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  if (isLoading)
+  if (isLoading) {
     return (
       <div className="text-center text-white/50 p-10">
         <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-indigo-500" />
         Chargement...
       </div>
     );
-  if (isError || !realCourse)
+  }
+
+  if (isError || !realCourse) {
     return (
       <div className="text-center text-rose-400 p-10">Cours introuvable.</div>
     );
+  }
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6 text-white space-y-6 animate-in fade-in duration-200">
-      <Link
-        to="/user/courses"
-        className="inline-flex items-center gap-2 text-xs text-white/50 hover:text-white transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" /> Retour au catalogue
-      </Link>
-
-      {/* Titre dynamique reçu de Django */}
-      <div className="pb-4 border-b border-white/5">
-        <h1 className="text-2xl md:text-3xl font-bold font-display tracking-tight text-white mb-1">
-          {realCourse.title}
-        </h1>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
-          {realCourse.category || "Module Technique"}
-        </span>
-      </div>
+      <CourseHeader title={realCourse.title} category={realCourse.category} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* COLONNE GAUCHE (COMPOSANT INJECTÉ DYNAMIQUEMENT) */}
         <div className="lg:col-span-2">{renderCourseContent()}</div>
-
-        {/* COLONNE DROITE (PROGRESSION ET VALIDATION) */}
         <div className="space-y-4">
-          <div className="p-5 rounded-2xl border border-white/5 bg-white/5 space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white/40">
-              Ton avancement
-            </h3>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center text-xs font-medium">
-                <span className="text-white/60">Complété à</span>
-                <span className="text-indigo-400 font-bold text-sm">
-                  {localProgress}%
-                </span>
-              </div>
-              <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                <div
-                  className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-                  style={{ width: `${localProgress}%` }}
-                ></div>
-              </div>
-            </div>
-
-            <hr className="border-white/5" />
-            <p className="text-xs text-white/50 leading-relaxed">
-              Consultez l'ensemble des onglets et schémas explicatifs. Dès que
-              vous maîtrisez ces notions, validez le cours.
-            </p>
-
-            <button
-              onClick={handleCompleteCourse}
-              disabled={isSaving || localProgress === 100}
-              className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all ${
-                localProgress === 100
-                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-not-allowed"
-                  : "bg-indigo-600 text-white hover:bg-indigo-500 active:scale-98 cursor-pointer shadow-lg"
-              }`}
-            >
-              <CheckCircle className="w-4 h-4" />
-              {isSaving
-                ? "Enregistrement..."
-                : localProgress === 100
-                  ? "Module Terminé ! 🎉"
-                  : "Marquer comme terminé"}
-            </button>
-          </div>
+          <CourseSidebar localProgress={localProgress} isSaving={isSaving} />
         </div>
       </div>
 
-      {/* QUIZ SECTION */}
+      {/* SECTION QUIZ */}
       <div className="mt-8">
-        <Quiz id={id} onQuizPassed={handleQuizPassed} />
+        {isQuizUnlocked ? (
+          <Quiz
+            id={id}
+            onQuizPassed={handleQuizPassed}
+            isCourseCompleted={localProgress === 100}
+          />
+        ) : (
+          <div className="p-8 rounded-2xl border border-dashed border-white/10 bg-white/5 flex flex-col items-center text-center space-y-4">
+            <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+              <Lock className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-white">
+                Le quiz est verrouillé
+              </h3>
+              <p className="text-sm text-white/60 mt-1 max-w-sm">
+                Prends le temps de bien lire le cours. Le quiz sera disponible
+                dès la fin du chrono.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-amber-300 font-mono text-sm">
+              <Timer className="w-4 h-4 animate-pulse" />
+              Temps restant : {formatTime(timeLeft)}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

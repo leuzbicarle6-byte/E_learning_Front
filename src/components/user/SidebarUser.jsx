@@ -15,11 +15,6 @@ export default function SidebarUser({ isOpen, setIsOpen }) {
       icon: <LayoutDashboard className="w-5 h-5" />,
     },
     {
-      name: "Mon Profil",
-      path: "/user/profile",
-      icon: <User className="w-5 h-5" />,
-    },
-    {
       name: "Les Cours",
       path: "/user/courses",
       icon: <List className="w-5 h-5" />,

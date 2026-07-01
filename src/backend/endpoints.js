@@ -37,7 +37,7 @@ export const ENDPOINTS = {
   // ========================================
 
   profile: {
-    get: `${PROFILE_ROOT}`,
+    get: `${PROFILE_ROOT}profile/`,
     getById: (id) => `${PROFILE_ROOT}${id}/`,
     update: `${PROFILE_ROOT}update/`,
     delete: `${PROFILE_ROOT}delete/`,

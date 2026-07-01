@@ -116,7 +116,7 @@ export default function Navbar() {
               {getInitials()}
             </div>
 
-            <div className="hidden md:block text-left max-w-[120px]">
+            <div className="hidden md:block text-left max-w-30">
               <p className="text-xs font-medium text-white truncate">
                 {user?.first_name} {user?.last_name}
               </p>

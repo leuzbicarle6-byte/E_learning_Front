@@ -67,7 +67,7 @@ export default function Dashboard() {
           {/* Gros Bouton d'Action Unique */}
           <div className="w-full md:w-auto border-t border-white/5 md:border-none pt-4 md:pt-0 flex justify-end">
             <Link
-              to="/courses/watch"
+              to="/user/courses"
               className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-98 cursor-pointer group"
             >
               <Play className="w-4 h-4 fill-white group-hover:scale-110 transition-transform" />
