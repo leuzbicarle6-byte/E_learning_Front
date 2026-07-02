@@ -11,7 +11,7 @@ import {
 import { useDispatch } from "react-redux";
 import { logout } from "../backend/features/auth/authSlice";
 
-export default function SidebarAdmin({ isOpen, setIsOpen }) {
+export default function LayoutAdmin({ isOpen, setIsOpen }) {
   const location = useLocation();
   const dispatch = useDispatch();
 
