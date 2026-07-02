@@ -1,6 +1,6 @@
 import { authApi } from "./authApi";
 import { userApi } from "../user/userApi";
-import { coursesApi } from "../courses/coursesAPI"; // Ajuste le chemin si besoin
+import { coursesApi } from "../courses/coursesApi"; // Ajuste le chemin si besoin
 import { logout } from "./authSlice";
 
 export const resetApp = () => (dispatch) => {
