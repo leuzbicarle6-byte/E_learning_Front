@@ -10,7 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 // Importation de tes Layouts
 import LayoutUser from "../Layouts/LayoutUser";
-import LayoutAdmin from "../layouts/LayoutAdmin";
+import LayoutAdmin from "../Layouts/LayoutAdmin";
 
 // Importation de tes listes de routes (tableaux d'objets)
 import PublicRoutes from "./PublicRoutes";
