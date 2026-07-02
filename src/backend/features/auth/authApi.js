@@ -1,30 +1,43 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../../baseQuery";
-import { ENDPOINTS } from "../../endpoints"; // Correction de l'orthographe et utilisation de l'objet global
+import { ENDPOINTS } from "../../endpoints";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: baseQueryWithReauth,
+
+  // 1. Déclaration du tag
+  tagTypes: ["User"],
+
   endpoints: (builder) => ({
-    // Inscription
+    // Récupérer le profil (Ajouté pour exploiter le système de tags)
+    getUserProfile: builder.query({
+      query: () => ({
+        url: ENDPOINTS.auth.userProfile, // Exemple: /auth/me/ ou /auth/user/
+        method: "GET",
+      }),
+      // 2. Ce endpoint fournit le tag "User" et garde le résultat en cache
+      providesTags: ["User"],
+    }),
+
     register: builder.mutation({
       query: (data) => ({
-        url: ENDPOINTS.auth.register, // Fini la concaténation, on pioche directement
+        url: ENDPOINTS.auth.register,
         method: "POST",
         body: data,
       }),
     }),
 
-    // Connexion
     login: builder.mutation({
       query: (credentials) => ({
         url: ENDPOINTS.auth.login,
         method: "POST",
         body: credentials,
       }),
+      // 3. Invalide le cache précédent au cas où un ancien profil traînait
+      invalidatesTags: ["User"],
     }),
 
-    // Rafraîchissement du Token JWT
     refreshToken: builder.mutation({
       query: ({ refresh }) => ({
         url: ENDPOINTS.auth.refresh,
@@ -33,47 +46,49 @@ export const authApi = createApi({
       }),
     }),
 
-    // Déconnexion (Blacklist du refresh token côté Django)
     logout: builder.mutation({
       query: (data) => ({
         url: ENDPOINTS.auth.logout,
         method: "POST",
-        body: data, // Attend généralement { refresh: "votre_token" }
+        body: data,
       }),
+      // 4. Force RTK Query à vider/invalider les données du profil à la déconnexion
+      invalidatesTags: ["User"],
     }),
 
-    // Changement de mot de passe (Utilisateur connecté)
     changePassword: builder.mutation({
       query: (passwords) => ({
-        url: ENDPOINTS.password.change, // Aligné sur /password/change/ de Django
+        url: ENDPOINTS.password.change,
         method: "PUT",
         body: passwords,
       }),
+      // Optionnel : force à recharger le profil si le backend change des infos lors du switch
+      invalidatesTags: ["User"],
     }),
 
-    // Demande de réinitialisation (Mot de passe oublié)
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: ENDPOINTS.password.requestReset, // Aligné sur /password/request-reset/
+        url: ENDPOINTS.password.requestReset,
         method: "POST",
-        body: data, // { email }
+        body: data,
       }),
     }),
 
-    // Confirmation de la réinitialisation (Via le lien reçu par email)
     confirmPasswordReset: builder.mutation({
       query: ({ uidb64, token, ...data }) => ({
-        // On utilise la fonction fléchée dynamique définie dans nos ENDPOINTS
         url: ENDPOINTS.password.resetConfirm(uidb64, token),
         method: "POST",
-        body: data, // Contient le { password } (et le password_confirm si géré)
+        body: data,
       }),
     }),
   }),
 });
 
-// Export des hooks magiques de RTK Query
 export const {
+  // == Mes Query ==
+  useGetUserProfileQuery,
+
+  // == Mes mutations ==
   useRegisterMutation,
   useLoginMutation,
   useRefreshTokenMutation,

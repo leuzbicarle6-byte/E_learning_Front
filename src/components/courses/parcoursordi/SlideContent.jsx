@@ -119,11 +119,11 @@ export default function SlideContent({ slide }) {
           {slide.title}
         </h2>
         {slide.image && (
-          <div className="h-36 rounded-xl overflow-hidden bg-slate-900 border border-white/5">
+          <div className="h-60 rounded-xl overflow-hidden bg-slate-900 border border-white/5">
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-cover opacity-70"
+              className="w-full h-full object-contain opacity-70"
               loading="lazy"
             />
           </div>

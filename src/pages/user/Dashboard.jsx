@@ -1,83 +1,107 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../backend/features/auth/authSlice";
-import { Play, Laptop, HelpCircle, ShieldCheck } from "lucide-react";
+import { useGetCoursesQuery } from "../../backend/features/courses/coursesApi";
+import { Play, Laptop, HelpCircle, ShieldCheck, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
+  
+  // Lecture de la réponse paginée
+  const { data: courseData, isLoading, isError } = useGetCoursesQuery();
 
-  // Le tout premier cours fondamental pour le débutant
-  const currentCourse = {
-    title: "D'abord maîtriser son ordinateur",
-    category: "Les Fondations",
-    progress: 0, // Il commence tout juste !
-    nextChapter:
-      "Module 1 : Organiser ses fichiers et ne plus jamais rien perdre",
-    image:
-      "https://images.unsplash.com/photo-1547082299-de196ea013d6?w=500&auto=format&fit=crop&q=60",
-  };
+  // Extraction du tableau depuis l'objet de pagination DRF
+  const coursesList = courseData?.results || [];
+
+  // Sélection intelligente : on prend le cours en cours, sinon le premier
+  const activeCourse = coursesList.find(course => course.user_progress < 100) || coursesList[0];
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-white/50">
+        <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
+        <p className="text-xs">Préparation de votre espace de travail...</p>
+      </div>
+    );
+  }
+
+  if (isError || !activeCourse) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 rounded-2xl border border-white/5 bg-white/5 text-center text-white/40 space-y-2">
+        <AlertCircle className="w-5 h-5 mx-auto text-indigo-500/60" />
+        <h3 className="text-sm font-semibold text-white">Espace de cours vide</h3>
+        <p className="text-xs max-w-xs mx-auto">
+          Aucun cours n'est actuellement disponible sur votre compte.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in duration-300">
       {/* 1. MESSAGE D'ACCUEIL CHALEUREUX */}
       <div className="space-y-2">
         <h1 className="font-display font-bold text-2xl md:text-3xl text-white tracking-tight">
-          Bienvenue sur LearnTech, {user?.first_name || "Bro"} 🚀
+          Bienvenue sur Infosits, {user?.first_name || "Apprenti"} 🚀
         </h1>
         <p className="text-white/50 text-sm leading-relaxed">
           Chaque grand expert a commencé exactement là où tu es aujourd'hui.
-          Installe-toi confortablement, on pose les bases ensemble.
+          Installe-toi confortablement, on avance ensemble.
         </p>
       </div>
 
-      {/* 2. LE CAP DE NAVIGATION : L'OBJECTIF N°1 */}
+      {/* 2. OBJECTIF DYNAMIQUE */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-semibold text-white/40 uppercase tracking-wider">
-            Ton point de départ
+            {activeCourse.user_progress === 100 ? "Dernier module validé" : "Ton objectif actuel"}
           </h2>
-          <span className="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5" /> Recommandé pour débuter
-          </span>
+          {activeCourse.user_progress === 100 ? (
+            <span className="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
+              <CheckCircle className="w-3.5 h-3.5" /> Tout est à jour !
+            </span>
+          ) : (
+            <span className="text-[11px] font-medium text-amber-400 flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5" /> À continuer
+            </span>
+          )}
         </div>
 
         <div className="rounded-2xl border border-white/5 bg-white/5 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-white/10 transition-colors duration-300">
-          {/* Infos du cours Fondations */}
           <div className="flex gap-5 items-center">
             <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 hidden sm:flex items-center justify-center bg-indigo-600/10 border border-indigo-500/20 text-indigo-400">
               <Laptop className="w-8 h-8" />
             </div>
             <div className="space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/10">
-                {currentCourse.category}
+                {activeCourse.category}
               </span>
               <h3 className="font-display font-bold text-white text-lg md:text-xl pt-1">
-                {currentCourse.title}
+                {activeCourse.title}
               </h3>
               <p className="text-xs text-white/40">
-                Première étape :{" "}
-                <span className="text-white/60 font-medium">
-                  {currentCourse.nextChapter}
+                Progression :{" "}
+                <span className={activeCourse.user_progress === 100 ? "text-emerald-400 font-semibold" : "text-indigo-400 font-semibold"}>
+                  {activeCourse.user_progress}%
                 </span>
               </p>
             </div>
           </div>
 
-          {/* Gros Bouton d'Action Unique */}
           <div className="w-full md:w-auto border-t border-white/5 md:border-none pt-4 md:pt-0 flex justify-end">
             <Link
-              to="/user/courses"
+              to={`/user/courses/${activeCourse.id}`}
               className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-98 cursor-pointer group"
             >
               <Play className="w-4 h-4 fill-white group-hover:scale-110 transition-transform" />
-              Démarrer le cours
+              {activeCourse.user_progress === 100 ? "Revoir le module" : activeCourse.user_progress > 0 ? "Continuer l'étude" : "Démarrer le cours"}
             </Link>
           </div>
         </div>
       </div>
 
-      {/* 3. LES BLOCS DE RÉASSURANCE (Pour enlever la peur de mal faire) */}
+      {/* 3. LES BLOCS DE RÉASSURANCE */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="p-5 rounded-2xl border border-white/5 bg-[#0f223f]/20 flex items-center gap-4">
           <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-400 shrink-0">
@@ -86,7 +110,7 @@ export default function Dashboard() {
           <div>
             <h4 className="text-sm font-medium text-white">À ton rythme</h4>
             <p className="text-xs text-white/40">
-              Pas de direct, pas de stress. Tu peux regarder les vidéos autant
+              Pas de direct, pas de stress. Tu peux revoir le contenu autant
               de fois que nécessaire.
             </p>
           </div>
@@ -101,8 +125,8 @@ export default function Dashboard() {
               Bloqué ? Des questions ?
             </h4>
             <p className="text-xs text-white/40">
-              Clique sur l'onglet communauté dans ta barre latérale pour obtenir
-              de l'aide rapidement.
+              Consulte l'onglet communauté ou contacte ton encadrement pour débloquer
+              tes exercices rapidement.
             </p>
           </div>
         </div>

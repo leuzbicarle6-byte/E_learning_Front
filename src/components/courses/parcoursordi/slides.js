@@ -22,7 +22,7 @@ export const SLIDES = [
     title: "C'est quoi un ordinateur ?",
     text: "Un ordinateur fonctionne comme un assistant ultra rapide. Tu lui donnes une demande, il la traite, puis il t’affiche le résultat. Simple. Rapide. Automatique.",
     image:
-      "https://images.unsplash.com/photo-1547082299-de196ea013d6?q=80&w=800",
+      "https://i.pinimg.com/736x/f5/63/3a/f5633aa589d4d5381b6d00f2140c010c.jpg",
   },
 
   {
@@ -74,7 +74,7 @@ export const SLIDES = [
     badgeColor: "purple",
     title: "Ordinateur de bureau (PC fixe)",
     image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=400",
+      "https://i.pinimg.com/736x/7c/f8/5c/7cf85cadeffe83046f4caa5fce4aa0f8.jpg",
     text: "Composé de plusieurs éléments séparés : écran, unité centrale, clavier et souris.",
     note: "Avantage : très performant et durable. Idéal pour travailler longtemps au même endroit.",
   },
@@ -88,7 +88,7 @@ export const SLIDES = [
     badgeColor: "emerald",
     title: "Ordinateur portable (Laptop)",
     image:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=400",
+      "https://i.pinimg.com/736x/8d/fa/e5/8dfae58331db61e8677fdbf023ee51f7.jpg",
     text: "Tout-en-un : écran, clavier et composants réunis dans un seul appareil léger et pliable.",
     note: "Avantage : facile à transporter, fonctionne sur batterie, parfait pour bouger.",
   },
@@ -129,7 +129,7 @@ export const SLIDES = [
     badgeColor: "amber",
     title: "Unité centrale",
     image:
-      "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=300",
+      "https://i.pinimg.com/1200x/36/ca/ab/36caab676b76145a8ad18c70298a9ce7.jpg",
     text: "Elle contient le processeur (calculs) et la mémoire (stockage des données). C’est le cœur de l’ordinateur.",
   },
 
@@ -142,7 +142,7 @@ export const SLIDES = [
     badgeColor: "indigo",
     title: "Écran",
     image:
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=300",
+      "https://i.pinimg.com/1200x/7d/75/c8/7d75c8a0d47450d6a1a415e7e0271fdb.jpg",
     text: "Il affiche tout ce que fait l’ordinateur : textes, images, vidéos et interfaces.",
   },
 
@@ -155,7 +155,7 @@ export const SLIDES = [
     badgeColor: "emerald",
     title: "Clavier",
     image:
-      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?q=80&w=300",
+      "https://i.pinimg.com/1200x/d9/97/69/d9976941ad82be4ee8ab8346d7b050b3.jpg",
     text: "Il permet de taper du texte et de donner des instructions à l’ordinateur.",
   },
 

@@ -48,13 +48,13 @@ export default function Login() {
 
       // 3. Redirection avec les chemins exacts (sans fautes de frappe)
       if (res?.user?.role === "admin") {
-        navigate("/admin/dashboard"); 
+        navigate("/admin/dashboard");
       } else {
-        navigate("/user/dashboard"); 
+        navigate("/user/dashboard");
       }
     } catch (err) {
       setApiError(
-        err?.data?.message || "Connexion impossible. Vérifie tes identifiants."
+        err?.data?.message || "Connexion impossible. Vérifie tes identifiants.",
       );
     }
   }

@@ -4,12 +4,14 @@ import {
   useGetCourseByIdQuery,
   useCompleteCourseMutation,
 } from "../../backend/features/courses/coursesApi";
-import { Loader2, Timer, Lock } from "lucide-react";
+import { Loader2, Timer, Lock, HelpCircle, CheckCircle2 } from "lucide-react";
 import Quiz from "../../components/quiz/Quiz";
 
 import CourseHeader from "../../components/courses/CourseHeader";
 import CourseSidebar from "../../components/courses/CourseSidebar";
 import TabMere from "../../components/courses/TabMere";
+import WordDetail from "../../components/courses/word/WordDetail";
+import SupportBlock from "../../components/SupportBlock";
 
 export default function CoursDetail() {
   const { id } = useParams();
@@ -35,22 +37,15 @@ export default function CoursDetail() {
       setIsQuizUnlocked(realCourse.is_quiz_unlocked || false);
       setTimeLeft(realCourse.time_remaining || 0);
 
-      // SÉCURITÉ CRUCIALE : Si user_progress est à 0 et qu'il reste 3600s,
-      // cela signifie que l'utilisateur ouvre le cours pour la toute première fois.
-      // On envoie une requête rapide pour créer la ligne en BDD et lancer le "started_at" officiel.
-      if (
-        realCourse.user_progress === 0 &&
-        realCourse.time_remaining === 60 &&
-        !realCourse.is_quiz_unlocked
-      ) {
+      if (realCourse.user_progress === 0 && !realCourse.is_quiz_unlocked) {
         updateProgress({ id: id, progress_percentage: 1 })
           .unwrap()
-          .then(() => refetch()); // On rafraîchit pour récupérer le vrai "time_remaining" du serveur
+          .then(() => refetch());
       }
     }
   }, [realCourse, id, updateProgress, refetch]);
 
-  // 2. Compte à rebours visuel (Front-end) pour animer le chrono seconde par seconde
+  // 2. Compte à rebours visuel (Front-end) - Nettoyé de tout effet secondaire interne
   useEffect(() => {
     if (timeLeft <= 0 || isQuizUnlocked) return;
 
@@ -58,8 +53,6 @@ export default function CoursDetail() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          setIsQuizUnlocked(true);
-          refetch(); // On valide définitivement auprès du serveur que le temps est écoulé
           return 0;
         }
         return prev - 1;
@@ -67,9 +60,16 @@ export default function CoursDetail() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeLeft, isQuizUnlocked, refetch]);
+  }, [timeLeft, isQuizUnlocked]);
 
-  // Formater les secondes (ex: 3600 -> 01h 00m 00s ou 59m 30s)
+  // 3. Surveillance de la fin du chrono pour débloquer le Quiz proprement
+  useEffect(() => {
+    if (timeLeft === 0 && !isQuizUnlocked && realCourse) {
+      setIsQuizUnlocked(true);
+      refetch();
+    }
+  }, [timeLeft, isQuizUnlocked, refetch, realCourse]);
+
   const formatTime = (seconds) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -89,15 +89,17 @@ export default function CoursDetail() {
   const renderCourseContent = () => {
     if (!realCourse) return null;
 
-    const courseTitleKey = realCourse.title
+    const courseTitleKey = realCourse.slug
       ?.toLowerCase()
       .replace(/[^a-z0-9]/g, "-")
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
 
     switch (courseTitleKey) {
-      case "qu-est-une-machine":
+      case "quest-ce-quune-machine":
         return <TabMere />;
+      case "word":
+        return <WordDetail />;
       default:
         return (
           <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3">
@@ -136,26 +138,64 @@ export default function CoursDetail() {
         </div>
       </div>
 
-      {/* SECTION QUIZ */}
+      {/* SECTION BLOC DE VALIDATION FINALE (QUIZ) */}
       <div className="mt-8">
         {isQuizUnlocked ? (
-          <Quiz
-            id={id}
-            onQuizPassed={handleQuizPassed}
-            isCourseCompleted={localProgress === 100}
-          />
+          <div
+            className={`p-6 rounded-2xl border transition-all ${
+              localProgress === 100
+                ? "bg-emerald-500/5 border-emerald-500/20"
+                : "bg-indigo-500/5 border-indigo-500/20"
+            }`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                {localProgress === 100 ? (
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 shrink-0">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20 shrink-0">
+                    <HelpCircle className="w-5 h-5" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    {localProgress === 100
+                      ? "Félicitations, module validé !"
+                      : "Prêt à tester tes connaissances ?"}
+                  </h3>
+                  <p className="text-xs text-white/60 mt-0.5">
+                    {localProgress === 100
+                      ? "Tu as brillamment réussi les étapes de ce cours."
+                      : "Le chrono est terminé, tu peux maintenant ouvrir le questionnaire."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Rendu du bouton Modal Quiz */}
+              <div className="shrink-0">
+                <Quiz
+                  id={id}
+                  onQuizPassed={handleQuizPassed}
+                  isCourseCompleted={localProgress === 100}
+                />
+              </div>
+            </div>
+          </div>
         ) : (
+          /* ÉTAT VERROUILLÉ (Chrono en cours) */
           <div className="p-8 rounded-2xl border border-dashed border-white/10 bg-white/5 flex flex-col items-center text-center space-y-4">
             <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
               <Lock className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-lg font-medium text-white">
-                Le quiz est verrouillé
+                Le quiz is verrouillé
               </h3>
               <p className="text-sm text-white/60 mt-1 max-w-sm">
-                Prends le temps de bien lire le cours. Le quiz sera disponible
-                dès la fin du chrono.
+                Prends le temps de bien lire le cours et de pratiquer sur ton
+                ordinateur. Le quiz sera disponible dès la fin du chrono.
               </p>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-amber-300 font-mono text-sm">
@@ -165,6 +205,11 @@ export default function CoursDetail() {
           </div>
         )}
       </div>
+
+      {/* CORRECTION ICI : Utilisation de realCourse pour éviter les crashs si tableau */}
+      {localProgress === 100 && realCourse?.slug === "word" && (
+        <SupportBlock realCourse={realCourse} />
+      )}
     </div>
   );
 }

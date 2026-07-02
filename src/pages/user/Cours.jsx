@@ -130,16 +130,43 @@ export default function Cours() {
                     <span className="block text-[10px] text-white/40 uppercase">
                       Progression
                     </span>
-                    <span className="text-xs font-semibold text-indigo-400">
-                      {cours.user_progress || 0}%
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-xs font-semibold ${
+                          cours.user_progress === 100
+                            ? "text-emerald-400"
+                            : "text-indigo-400"
+                        }`}
+                      >
+                        {cours.user_progress || 0}%
+                      </span>
+                      {cours.user_progress === 100 && (
+                        <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.2 rounded-md font-medium">
+                          Terminé
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  {/* 🌟 Chemin absolu sécurisé vers les détails via l'ID unique */}
+
+                  {/* Si le cours est fini, on change le bouton pour indiquer qu'on peut le revoir */}
                   <Link
                     to={`/user/courses/${cours.id}`}
-                    className="flex items-center justify-center p-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 transition-colors cursor-pointer shadow-md shadow-indigo-600/10"
+                    className={`flex items-center gap-1.5 p-2 px-3 rounded-xl text-xs font-medium transition-colors cursor-pointer shadow-md ${
+                      cours.user_progress === 100
+                        ? "bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/30 shadow-emerald-900/10"
+                        : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-600/10"
+                    }`}
                   >
-                    <Play className="w-4 h-4 fill-white" />
+                    {cours.user_progress === 100 ? (
+                      <>
+                        <span className="text-emerald-400 font-medium">
+                          Revoir
+                        </span>
+                        <Play className="w-3 h-3 fill-emerald-400 text-emerald-400" />
+                      </>
+                    ) : (
+                      <Play className="w-4 h-4 fill-white text-white" />
+                    )}
                   </Link>
                 </>
               )}

@@ -8,10 +8,15 @@ import {
   LogOut,
   Settings,
   GraduationCap,
+  Award,
 } from "lucide-react";
 import { selectCurrentUser, logout } from "../backend/features/auth/authSlice"; // Ajuste le chemin selon ton projet
+import { useLogoutMutation } from "../backend/features/auth/authApi";
+import { resetApp } from "../backend/features/auth/resetActions";
 
 export default function Navbar() {
+  const [logoutBackend] = useLogoutMutation();
+
   const user = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,9 +34,14 @@ export default function Navbar() {
     return `${first}${last}`;
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logoutBackend().unwrap();
+      await dispatch(resetApp());
+      navigate("/login");
+    } catch (error) {
+      console.log("Une erreur s'est produit lors de la deconnexion");
+    }
   };
 
   // Fermer les menus si on clique en dehors
@@ -52,7 +62,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="w-full bg-[#0a192f]/40 backdrop-blur-md border-b border-white/5 px-6 py-3 flex items-center justify-between sticky top-0 z-30">
+    <nav className="w-full bg-[#0a192f]/40 backdrop-blur-md border-b border-white/5 px-6 py-2 flex items-center justify-between sticky top-0 z-30">
       {/* 1. Titre de la page actuelle (Dynamique ou statique selon tes besoins) */}
       <div className="hidden sm:block">
         <h1 className="text-lg font-semibold text-white">Espace Apprenant</h1>
@@ -62,7 +72,7 @@ export default function Navbar() {
       </div>
 
       {/* Logo affiché uniquement sur Mobile (car la sidebar principale se cache) */}
-      <div className="flex sm:hidden items-center gap-2">
+      <div className="hidden items-center gap-2">
         <GraduationCap className="w-5 h-5 text-indigo-500" />
         <span className="font-bold text-white text-sm">LearnTech</span>
       </div>
@@ -103,6 +113,12 @@ export default function Navbar() {
               </div>
             </div>
           )}
+        </div>
+
+        <div className="relative">
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-md border border-emerald-500/20">
+            <Award className="w-5 h-5" /> {user?.total_xp} XP
+          </span>
         </div>
 
         {/* COMPTE UTILISATEUR DROPDOWN */}
