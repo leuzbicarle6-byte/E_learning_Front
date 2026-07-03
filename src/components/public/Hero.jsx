@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowRight, Users, BookOpen, Award } from "lucide-react";
 import "../../css/hero.css";
 import ModalInformation from "./ModalInformation";
+import { Link } from "react-router-dom";
 
 const stats = [
   { icon: Users, value: "250+", label: "Apprenants accompagnés" },
@@ -32,11 +33,11 @@ export default function Hero() {
       <div className="relative z-10 max-w-5xl mx-auto text-center">
         {/* Badge */}
         <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-indigo-300 text-sm font-medium mb-6 backdrop-blur-md">
-          Bureautique & Marketing, sans jargon
+          Bienvenue
         </span>
 
         {/* Titre */}
-        <h1 className="hero-title font-black text-5xl md:text-6xl text-white tracking-tight leading-tight">
+        <h1 className="hero-title font-black text-md   md:text-6xl text-white tracking-tight leading-tight">
           Vous débutez en informatique ?
           <br />
           <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400">
@@ -45,17 +46,20 @@ export default function Hero() {
         </h1>
 
         {/* Texte */}
-        <p className="hero-subtitle mt-8 text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
+        <p className="hero-subtitle mt-8 text-md md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
           Des formations modernes, simples et pratiques pour apprendre
           l’informatique pas à pas, même si vous partez de zéro.
         </p>
 
         {/* Boutons */}
         <div className="hero-buttons mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button className="group flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 transition-all duration-300 shadow-xl shadow-indigo-950/40 cursor-pointer">
+          <Link
+            to={"/login"}
+            className="group flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 transition-all duration-300 shadow-xl shadow-indigo-950/40 cursor-pointer"
+          >
             Commencer maintenant
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </button>
+          </Link>
 
           <button
             onClick={() => setModal(!modal)}

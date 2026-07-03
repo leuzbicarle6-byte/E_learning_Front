@@ -38,7 +38,7 @@ export default function CoursDetail() {
       setTimeLeft(realCourse.time_remaining || 0);
 
       if (realCourse.user_progress === 0 && !realCourse.is_quiz_unlocked) {
-        updateProgress({ id: id, progress_percentage: 1 })
+        updateProgress({ id: id, progress_percentage: 0 })
           .unwrap()
           .then(() => refetch());
       }

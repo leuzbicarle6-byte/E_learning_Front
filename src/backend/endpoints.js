@@ -15,6 +15,7 @@ const USERS_ROOT = `${API_BASE_URL}/users/`;
 const PROFILE_ROOT = `${API_BASE_URL}/users/`;
 const PASSWORD_ROOT = `${API_BASE_URL}/users/`;
 const COURSES_ROOT = `${API_BASE_URL}/courses/`;
+const PAYMENTS_ROOT = `${API_BASE_URL}/payments/`;
 
 // ========================================
 // ENDPOINTS
@@ -69,6 +70,13 @@ export const ENDPOINTS = {
     delete: (id) => `${COURSES_ROOT}${id}/`,
     progress: (id) => `${COURSES_ROOT}${id}/progress/`,
     quiz: (id) => `${COURSES_ROOT}${id}/quiz/`,
+  },
+
+  // ========================================
+  // PAYMENTS
+  // ========================================
+  payments: {
+    buyCourse: (courseId) => `${PAYMENTS_ROOT}courses/${courseId}/buy/`,
   },
 };
 

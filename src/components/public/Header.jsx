@@ -22,7 +22,7 @@ export default function Header() {
         </Link>
 
         {/* Boutons de Navigation */}
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <Link
             to="/login"
             className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500 transition-colors cursor-pointer"
@@ -35,7 +35,7 @@ export default function Header() {
           >
             S'inscrire
           </Link>
-        </div>
+        </div> */}
 
       </div>
     </header>

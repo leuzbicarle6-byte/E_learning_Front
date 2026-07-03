@@ -47,7 +47,7 @@ export default function Login() {
       dispatch(setCredentials(res));
 
       // 3. Redirection avec les chemins exacts (sans fautes de frappe)
-      if (res?.user?.role === "admin") {
+      if (res?.user?.role === "super-admin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/user/dashboard");

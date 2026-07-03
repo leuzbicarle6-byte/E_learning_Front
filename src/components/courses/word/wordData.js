@@ -3,13 +3,11 @@ import {
   Italic,
   Underline,
   Palette,
-  AlignLeft,
   AlignCenter,
   List,
   Image,
   Table,
   Link2,
-  FileText,
   LayoutGrid,
   RotateCw,
   MousePointerClick,
@@ -18,6 +16,14 @@ import {
   FilePlus,
   FolderOpen,
   Printer,
+  Heading1,       // Pour les titres
+  FileSpreadsheet,// Pour les tableaux
+  Bookmark,       // Pour les en-têtes
+  Coins,          // Pour le pied de page
+  Binary,         // Pour les numéros de page
+  Eye,            // Pour le filigrane
+  Grid,           // Pour les bordures
+  Scissors        // Pour couper/coller
 } from "lucide-react";
 
 export const wordIntro = {
@@ -81,37 +87,80 @@ export const rubanGroups = [
       },
       {
         icon: Palette,
-        nom: "Couleur du texte",
+        nom: "Couleur",
         description: "Change la couleur des lettres",
       },
       {
-        icon: AlignCenter,
-        nom: "Centrer",
-        description: "Centre le texte sur la page",
+        icon: Heading1,
+        nom: "Styles (Titres)",
+        description: "Organise tes titres (Titre 1, Titre 2) pour créer un sommaire automatique",
       },
-      { icon: List, nom: "Puces", description: "Crée une liste à puces" },
+      {
+        icon: AlignCenter,
+        nom: "Centrer / Justifier",
+        description: "Aligne ton texte au milieu ou proprement sur les bords",
+      },
+      { icon: List, nom: "Puces", description: "Crée une liste ou une énumération" },
     ],
   },
   {
     id: "insertion",
     titre: "Insertion",
     couleur: "violet",
-    description: "Pour ajouter des éléments dans ton document",
+    description: "Pour ajouter des éléments et des repères dans ton document",
     outils: [
       {
         icon: Image,
         nom: "Image",
-        description: "Insère une photo depuis ton ordinateur",
+        description: "Insère une photo ou une illustration depuis ton PC",
       },
       {
         icon: Table,
         nom: "Tableau",
-        description: "Crée un tableau avec lignes et colonnes",
+        description: "Crée un tableau structuré avec lignes et colonnes",
+      },
+      {
+        icon: Bookmark,
+        nom: "En-tête",
+        description: "Ajoute un titre ou un logo qui se répète tout en haut de chaque page",
+      },
+      {
+        icon: Coins,
+        nom: "Pied de page",
+        description: "Ajoute des infos (auteur, date) tout en bas de chaque page",
+      },
+      {
+        icon: Binary,
+        nom: "Numéro de page",
+        description: "Numérote automatiquement toutes les pages de ton document",
       },
       {
         icon: Link2,
-        nom: "Lien",
-        description: "Ajoute un lien vers un site web",
+        nom: "Lien hypertexte",
+        description: "Ajoute un lien cliquable vers un site web",
+      },
+    ],
+  },
+  {
+    id: "conception",
+    titre: "Conception / Création",
+    couleur: "rose",
+    description: "Pour personnaliser le style visuel et la sécurité du document",
+    outils: [
+      {
+        icon: Eye,
+        nom: "Filigrane",
+        description: "Ajoute un texte transparent en arrière-plan (ex: 'BROUILLON' ou 'CONFIDENTIEL')",
+      },
+      {
+        icon: Palette,
+        nom: "Couleur de page",
+        description: "Change la couleur de fond de toute la feuille de papier",
+      },
+      {
+        icon: Grid,
+        nom: "Bordures de page",
+        description: "Ajoute un cadre décoratif ou sérieux tout autour de tes pages",
       },
     ],
   },
@@ -119,17 +168,22 @@ export const rubanGroups = [
     id: "mise-en-page",
     titre: "Mise en page",
     couleur: "emerald",
-    description: "Pour organiser l'apparence générale de la page",
+    description: "Pour organiser l'apparence générale et la structure physique de la feuille",
     outils: [
       {
         icon: LayoutGrid,
         nom: "Marges",
-        description: "Règle l'espace vide autour du texte",
+        description: "Règle la taille des espaces vides tout autour de ton texte",
       },
       {
         icon: RotateCw,
         nom: "Orientation",
-        description: "Choisis page verticale ou horizontale",
+        description: "Bascule ta feuille en mode vertical (Portrait) ou horizontal (Paysage)",
+      },
+      {
+        icon: FileSpreadsheet,
+        nom: "Colonnes",
+        description: "Divise ton texte en 2 ou 3 colonnes, comme dans un journal ou un dépliant",
       },
     ],
   },
@@ -165,13 +219,20 @@ export const exercicesWord = [
   },
   {
     id: 5,
-    titre: "Insérer une image",
+    titre: "Créer un En-tête",
     consigne:
-      "Clique sur l'onglet Insertion, puis sur Image, et choisis une photo.",
-    icon: Image,
+      "Va dans l'onglet Insertion, clique sur En-tête, choisis un modèle et écris ton nom.",
+    icon: Bookmark,
   },
   {
     id: 6,
+    titre: "Ajouter un Filigrane",
+    consigne:
+      "Va dans l'onglet Conception (ou Création), clique sur Filigrane et choisis le texte 'BROUILLON'.",
+    icon: Eye,
+  },
+  {
+    id: 7,
     titre: "Enregistrer",
     consigne:
       "Clique sur l'icône disquette en haut à gauche, choisis un nom, puis clique sur Enregistrer.",

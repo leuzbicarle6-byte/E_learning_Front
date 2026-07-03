@@ -1,59 +1,116 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { rubanGroups } from "./wordData";
-import RubanGroup from "./RubanGroup";
 
-const activeColorMap = {
-  rose: "bg-rose-500 text-white",
-  sky: "bg-sky-500 text-white",
-  violet: "bg-violet-500 text-white",
-  emerald: "bg-emerald-500 text-white",
+// Dictionnaire pour gérer dynamiquement tes couleurs Tailwind
+const colorMap = {
+  rose: "border-rose-500/20 bg-rose-500/5 text-rose-400 dynamic-active:bg-rose-600",
+  sky: "border-sky-500/20 bg-sky-500/5 text-sky-400 dynamic-active:bg-sky-600",
+  violet:
+    "border-violet-500/20 bg-violet-500/5 text-violet-400 dynamic-active:bg-violet-600",
+  emerald:
+    "border-emerald-500/20 bg-emerald-500/5 text-emerald-400 dynamic-active:bg-emerald-600",
 };
 
 export default function RubanWord() {
-  const [activeTab, setActiveTab] = useState(rubanGroups[0].id);
-  const currentGroupe = rubanGroups.find((g) => g.id === activeTab);
+  const [activeGroup, setActiveGroup] = useState(rubanGroups[0].id);
+
+  const currentGroup = rubanGroups.find((g) => g.id === activeGroup);
+  const colorStyles = colorMap[currentGroup.couleur] || colorMap.sky;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 animate-fadeIn">
       <div>
-        <h2 className="text-xl font-semibold text-white">Le ruban de Word</h2>
+        <h2 className="text-xl font-bold text-white mb-2">
+          Explore le Ruban Word
+        </h2>
         <p className="text-sm text-white/60">
-          On va voir seulement les outils que tu utiliseras le plus souvent.
+          Le ruban est organisé en onglets. Clique sur un onglet pour découvrir
+          ses fonctionnalités fondamentales :
         </p>
       </div>
 
-      {/* Barre de tabs façon ruban Word */}
-      <div className="flex gap-1 border-b border-white/10 overflow-x-auto">
-        {rubanGroups.map((groupe) => {
-          const isActive = activeTab === groupe.id;
-          return (
-            <button
-              key={groupe.id}
-              onClick={() => setActiveTab(groupe.id)}
-              className={`px-4 py-2 text-sm font-medium rounded-t-lg whitespace-nowrap transition ${
-                isActive
-                  ? activeColorMap[groupe.couleur]
-                  : "text-white/50 hover:text-white/80 hover:bg-white/5"
-              }`}
-            >
-              {groupe.titre}
-            </button>
-          );
-        })}
-      </div>
+      {/* Onglets du simulateur */}
+      <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+        <div className="flex bg-white/5 border-b border-white/10 px-2 pt-2 gap-1 overflow-x-auto scrollbar-none">
+          {rubanGroups.map((group) => {
+            const isActive = activeGroup === group.id;
+            // Choix de la couleur au survol/actif selon les données
+            const baseColor =
+              group.couleur === "rose"
+                ? "hover:text-rose-400"
+                : group.couleur === "sky"
+                  ? "hover:text-sky-400"
+                  : group.couleur === "violet"
+                    ? "hover:text-violet-400"
+                    : "hover:text-emerald-400";
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -5 }}
-          transition={{ duration: 0.15 }}
-        >
-          <RubanGroup groupe={currentGroupe} />
-        </motion.div>
-      </AnimatePresence>
+            return (
+              <button
+                key={group.id}
+                onClick={() => setActiveGroup(group.id)}
+                className={`px-4 py-2.5 text-xs font-semibold rounded-t-lg transition whitespace-nowrap ${
+                  isActive
+                    ? group.couleur === "rose"
+                      ? "bg-rose-600 text-white"
+                      : group.couleur === "sky"
+                        ? "bg-sky-600 text-white"
+                        : group.couleur === "violet"
+                          ? "bg-violet-600 text-white"
+                          : "bg-emerald-600 text-white"
+                    : `text-white/40 ${baseColor} hover:bg-white/5`
+                }`}
+              >
+                {group.titre}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Contenu de l'onglet actif */}
+        <div className="p-5 space-y-4">
+          <div
+            className={`border p-4 rounded-xl ${colorStyles.split(" ")[0]} ${colorStyles.split(" ")[1]}`}
+          >
+            <h3 className={`text-lg font-bold ${colorStyles.split(" ")[2]}`}>
+              {currentGroup.titre}
+            </h3>
+            <p className="text-sm text-white/70 mt-1">
+              {currentGroup.description}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="text-xs font-bold text-white/40 uppercase tracking-wider">
+              Les Outils inclus :
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {currentGroup.outils.map((outil, idx) => {
+                const OutilIcon = outil.icon;
+                return (
+                  <div
+                    key={idx}
+                    className="flex gap-3 bg-white/5 p-3 rounded-lg border border-white/5 items-start hover:border-white/10 transition"
+                  >
+                    <div
+                      className={`p-2 rounded-lg bg-white/5 ${colorStyles.split(" ")[2]}`}
+                    >
+                      <OutilIcon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h5 className="text-sm font-semibold text-white/90">
+                        {outil.nom}
+                      </h5>
+                      <p className="text-xs text-white/50 mt-0.5">
+                        {outil.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

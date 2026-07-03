@@ -18,7 +18,6 @@ export const coursesApi = createApi({
         url: ENDPOINTS.courses.list,
         method: "GET",
       }),
-
       providesTags: ["Courses"],
     }),
 
@@ -31,7 +30,6 @@ export const coursesApi = createApi({
         url: ENDPOINTS.courses.detail(id),
         method: "GET",
       }),
-
       providesTags: (result, error, id) => [{ type: "Course", id }],
     }),
 
@@ -45,7 +43,6 @@ export const coursesApi = createApi({
         method: "POST",
         body: courseData,
       }),
-
       invalidatesTags: ["Courses"],
     }),
 
@@ -59,7 +56,6 @@ export const coursesApi = createApi({
         method: "PUT",
         body: data,
       }),
-
       invalidatesTags: (result, error, { id }) => [
         "Courses",
         { type: "Course", id: id },
@@ -76,7 +72,6 @@ export const coursesApi = createApi({
         method: "PATCH",
         body: data,
       }),
-
       invalidatesTags: (result, error, { id }) => [
         "Courses",
         { type: "Course", id: id },
@@ -92,7 +87,6 @@ export const coursesApi = createApi({
         url: ENDPOINTS.courses.delete(id),
         method: "DELETE",
       }),
-
       invalidatesTags: ["Courses"],
     }),
 
@@ -103,14 +97,11 @@ export const coursesApi = createApi({
     completeCourse: builder.mutation({
       query: ({ id, progress_percentage }) => ({
         url: ENDPOINTS.courses.progress(id),
-
         method: "PATCH",
-
         body: {
           progress_percentage,
         },
       }),
-
       invalidatesTags: (result, error, { id }) => [
         "Courses",
         { type: "Course", id: id },
@@ -126,7 +117,6 @@ export const coursesApi = createApi({
         url: ENDPOINTS.courses.quiz(id),
         method: "GET",
       }),
-
       providesTags: (result, error, id) => [{ type: "CourseQuiz", id }],
     }),
 
@@ -138,11 +128,23 @@ export const coursesApi = createApi({
           answers,
         },
       }),
-
       invalidatesTags: (result, error, { id }) => [
         { type: "Course", id: id },
         "Courses",
       ],
+    }),
+
+    // ========================================
+    // INITIALIZE PAYDUNYA PAYMENT (Achat Cours)
+    // ========================================
+
+    buyCourse: builder.mutation({
+      query: (id) => ({
+        url: ENDPOINTS.payments.buyCourse(id),
+        method: "POST",
+      }),
+      // On invalide le détail de ce cours pour forcer le rafraîchissement du statut d'accès
+      invalidatesTags: (result, error, id) => [{ type: "Course", id }],
     }),
 
     //----------- Terminer -------------//
@@ -156,7 +158,7 @@ export const coursesApi = createApi({
 export const {
   // Queries
   useGetCoursesQuery,
-  useGetCourseByIdQuery, // 🌟 Renommé ici aussi !
+  useGetCourseByIdQuery,
   useGetQuizQuestionsQuery,
 
   // Mutations
@@ -166,4 +168,5 @@ export const {
   useDeleteCourseMutation,
   useCompleteCourseMutation,
   useSubmitQuizAnswersMutation,
+  useBuyCourseMutation, // 🌟 Nouveau Hook généré pour ton bouton d'achat !
 } = coursesApi;
