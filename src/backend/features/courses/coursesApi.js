@@ -134,6 +134,17 @@ export const coursesApi = createApi({
       ],
     }),
 
+    // =========================
+    // Nombre de cours terminer
+    // =========================
+    getMeStats: builder.query({
+      query: () => ({
+        url: ENDPOINTS.courses.meStats,
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+
     // ========================================
     // INITIALIZE PAYDUNYA PAYMENT (Achat Cours)
     // ========================================
@@ -160,6 +171,7 @@ export const {
   useGetCoursesQuery,
   useGetCourseByIdQuery,
   useGetQuizQuestionsQuery,
+  useGetMeStatsQuery,
 
   // Mutations
   useCreateCourseMutation,

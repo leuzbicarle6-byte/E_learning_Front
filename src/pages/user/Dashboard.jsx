@@ -1,21 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../backend/features/auth/authSlice";
-import { useGetCoursesQuery } from "../../backend/features/courses/coursesApi";
-import { Play, Laptop, HelpCircle, ShieldCheck, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import {
+  useGetCoursesQuery,
+  useGetMeStatsQuery,
+} from "../../backend/features/courses/coursesApi";
+import {
+  Play,
+  Laptop,
+  HelpCircle,
+  ShieldCheck,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+  Award,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import ModalImportant from "./ModalImportant";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
-  
-  // Lecture de la réponse paginée
+  const { data: meStats } = useGetMeStatsQuery();
   const { data: courseData, isLoading, isError } = useGetCoursesQuery();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Déclenchement automatique de la modal si l'étudiant a fini un module
+  useEffect(() => {
+    if (meStats && meStats.completed_courses > 0) {
+      setIsModalOpen(true);
+    }
+  }, [meStats]);
 
   // Extraction du tableau depuis l'objet de pagination DRF
   const coursesList = courseData?.results || [];
 
   // Sélection intelligente : on prend le cours en cours, sinon le premier
-  const activeCourse = coursesList.find(course => course.user_progress < 100) || coursesList[0];
+  const activeCourse =
+    coursesList.find((course) => course.user_progress < 100) || coursesList[0];
 
   if (isLoading) {
     return (
@@ -30,7 +52,9 @@ export default function Dashboard() {
     return (
       <div className="max-w-4xl mx-auto p-6 rounded-2xl border border-white/5 bg-white/5 text-center text-white/40 space-y-2">
         <AlertCircle className="w-5 h-5 mx-auto text-indigo-500/60" />
-        <h3 className="text-sm font-semibold text-white">Espace de cours vide</h3>
+        <h3 className="text-sm font-semibold text-white">
+          Espace de cours vide
+        </h3>
         <p className="text-xs max-w-xs mx-auto">
           Aucun cours n'est actuellement disponible sur votre compte.
         </p>
@@ -41,21 +65,31 @@ export default function Dashboard() {
   return (
     <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in duration-300">
       {/* 1. MESSAGE D'ACCUEIL CHALEUREUX */}
-      <div className="space-y-2">
-        <h1 className="font-display font-bold text-2xl md:text-3xl text-white tracking-tight">
-          Bienvenue sur Infosits, {user?.first_name || "Apprenti"} 🚀
-        </h1>
-        <p className="text-white/50 text-sm leading-relaxed">
-          Chaque grand expert a commencé exactement là où tu es aujourd'hui.
-          Installe-toi confortablement, on avance ensemble.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="font-display font-bold text-2xl md:text-3xl text-white tracking-tight">
+            Bienvenue sur learnTech, {user?.first_name || "Apprenti"} 🚀
+          </h1>
+          <p className="text-white/50 text-sm leading-relaxed">
+            Chaque grand expert a commencé exactement là où tu es aujourd'hui.
+            Installe-toi confortablement, on avance ensemble.
+          </p>
+        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="sm:self-start shrink-0 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 text-white font-medium text-xs rounded-lg shadow-md hover:opacity-90 transition-opacity cursor-pointer animate-pulse"
+        >
+          📢 Note Importante
+        </button>
       </div>
 
       {/* 2. OBJECTIF DYNAMIQUE */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-semibold text-white/40 uppercase tracking-wider">
-            {activeCourse.user_progress === 100 ? "Dernier module validé" : "Ton objectif actuel"}
+            {activeCourse.user_progress === 100
+              ? "Dernier module validé"
+              : "Ton objectif actuel"}
           </h2>
           {activeCourse.user_progress === 100 ? (
             <span className="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
@@ -82,7 +116,13 @@ export default function Dashboard() {
               </h3>
               <p className="text-xs text-white/40">
                 Progression :{" "}
-                <span className={activeCourse.user_progress === 100 ? "text-emerald-400 font-semibold" : "text-indigo-400 font-semibold"}>
+                <span
+                  className={
+                    activeCourse.user_progress === 100
+                      ? "text-emerald-400 font-semibold"
+                      : "text-indigo-400 font-semibold"
+                  }
+                >
                   {activeCourse.user_progress}%
                 </span>
               </p>
@@ -95,13 +135,17 @@ export default function Dashboard() {
               className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-98 cursor-pointer group"
             >
               <Play className="w-4 h-4 fill-white group-hover:scale-110 transition-transform" />
-              {activeCourse.user_progress === 100 ? "Revoir le module" : activeCourse.user_progress > 0 ? "Continuer l'étude" : "Démarrer le cours"}
+              {activeCourse.user_progress === 100
+                ? "Revoir le module"
+                : activeCourse.user_progress > 0
+                  ? "Continuer l'étude"
+                  : "Démarrer le cours"}
             </Link>
           </div>
         </div>
       </div>
 
-      {/* 3. LES BLOCS DE RÉASSURANCE */}
+      {/* 3. LES BLOCS DE RÉASSURANCE & STATISTIQUES */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="p-5 rounded-2xl border border-white/5 bg-[#0f223f]/20 flex items-center gap-4">
           <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-400 shrink-0">
@@ -110,8 +154,8 @@ export default function Dashboard() {
           <div>
             <h4 className="text-sm font-medium text-white">À ton rythme</h4>
             <p className="text-xs text-white/40">
-              Pas de direct, pas de stress. Tu peux revoir le contenu autant
-              de fois que nécessaire.
+              Pas de direct, pas de stress. Tu peux revoir le contenu autant de
+              fois que nécessaire.
             </p>
           </div>
         </div>
@@ -125,12 +169,46 @@ export default function Dashboard() {
               Bloqué ? Des questions ?
             </h4>
             <p className="text-xs text-white/40">
-              Consulte l'onglet communauté ou contacte ton encadrement pour débloquer
-              tes exercices rapidement.
+              Consulte l'onglet communauté ou contacte ton encadrement pour
+              débloquer tes exercices rapidement.
+            </p>
+          </div>
+        </div>
+
+        {/* STATISTIQUE 1 : COURS TERMINÉS */}
+        <div className="p-5 rounded-2xl border border-white/5 bg-[#0f223f]/20 flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
+            <CheckCircle className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-white">Cours Terminés</h4>
+            <p className="text-xl font-bold text-emerald-400">
+              {meStats?.completed_courses ?? 0}
+            </p>
+          </div>
+        </div>
+
+        {/* STATISTIQUE 2 : AVANCEMENT GLOBAL */}
+        <div className="p-5 rounded-2xl border border-white/5 bg-[#0f223f]/20 flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
+            <Award className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-white">Progression Globale</h4>
+            <p className="text-xs text-white/40">
+              <span className="text-sm font-bold text-white">
+                {meStats?.completion_percentage ?? 0}%
+              </span>{" "}
+              de l'application ({meStats?.completed_courses ?? 0}/{meStats?.total_courses ?? 0} modules)
             </p>
           </div>
         </div>
       </div>
+
+      <ModalImportant
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

@@ -80,7 +80,7 @@ export default function ParcoursOrdinateur() {
             }
             className="flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shadow-indigo-600/10"
           >
-            Aller au Quiz <ArrowRight className="w-3.5 h-3.5" />
+            Tab suivant <ArrowRight className="w-3.5 h-3.5" />
           </button>
         ) : (
           <button

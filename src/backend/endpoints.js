@@ -64,6 +64,7 @@ export const ENDPOINTS = {
   courses: {
     list: `${COURSES_ROOT}`,
     create: `${COURSES_ROOT}`,
+    meStats: `${COURSES_ROOT}me/stats/`,
 
     detail: (id) => `${COURSES_ROOT}${id}/`,
     update: (id) => `${COURSES_ROOT}${id}/`,

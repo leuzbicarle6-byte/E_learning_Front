@@ -3,6 +3,7 @@ import ParcoursOrdinateur from "../courses/parcoursordi/ParcoursOrdinateur";
 import PeripheriquesSection from "../courses/parcoursordi/PeripheriquesSection";
 import UniteCentrale from "../courses/parcoursordi/uc/UniteCentral"; // Corrigé l'orthographe et le chemin potentiel
 import FixeVsPortable from "./parcoursordi/uc/FixeVsPortable";
+import Raccourcies from "./parcoursordi/uc/Raccourcies";
 
 export default function TabMere() {
   const [activeTab, setActiveTab] = useState("intro");
@@ -12,6 +13,7 @@ export default function TabMere() {
     { id: "peripheriques", label: "Périphériques" },
     { id: "uc", label: "Unité Centrale" },
     { id: "difference", label: "FixeVsPortable" },
+    { id: "raccourcie", label: "Raccourcies" },
   ];
 
   return (
@@ -42,6 +44,8 @@ export default function TabMere() {
         {activeTab === "uc" && <UniteCentrale />}
 
         {activeTab === "difference" && <FixeVsPortable />}
+
+        {activeTab === "raccourcie" && <Raccourcies />}
 
         {activeTab === "autre" && (
           <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-white/70 text-sm">
