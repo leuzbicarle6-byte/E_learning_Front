@@ -24,7 +24,6 @@ export default function LayoutUser() {
 
       {/* ZONE DE CONTENU GLOBAL */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        
         {/* 1. La Navbar est posée à la racine de la zone de contenu */}
         <Navbar />
 

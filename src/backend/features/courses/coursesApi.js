@@ -138,8 +138,8 @@ export const coursesApi = createApi({
     // Nombre de cours terminer
     // =========================
     getMeStats: builder.query({
-      query: () => ({
-        url: ENDPOINTS.courses.meStats,
+      query: (id) => ({
+        url: ENDPOINTS.courses.meStats(id),
         method: "GET",
       }),
       providesTags: ["Courses"],

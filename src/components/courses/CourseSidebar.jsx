@@ -2,7 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 
-export default function CourseSidebar({ localProgress, isSaving }) {
+// Ajout de la prop isLastCourse pour savoir s'il reste un cours après
+export default function CourseSidebar({
+  localProgress,
+  isSaving,
+  isLastCourse = false,
+}) {
   const isCompleted = localProgress === 100;
 
   return (
@@ -31,7 +36,9 @@ export default function CourseSidebar({ localProgress, isSaving }) {
 
       <p className="text-xs text-white/50 leading-relaxed">
         {isCompleted
-          ? "Félicitations ! Ce module est complété et validé."
+          ? isLastCourse
+            ? "Félicitations ! Tu as terminé avec succès le tout dernier module du catalogue ! 🎉"
+            : "Félicitations ! Ce module est complété et validé."
           : "Consultez le contenu. Vous devez obligatoirement valider le quiz en bas de page avec un score minimum de 70% pour terminer ce cours."}
       </p>
 
@@ -45,19 +52,18 @@ export default function CourseSidebar({ localProgress, isSaving }) {
         }`}
       >
         <CheckCircle className="w-4 h-4" />
-        {isSaving
-          ? "Enregistrement..."
-          : isCompleted
-            ? "Module Terminé ! 🎉"
-            : "Réussir le quiz pour valider"}
+        {isCompleted ? "Module Terminé ! 🎉" : "Réussir le quiz pour valider"}
       </button>
 
+      {/* Lien de retour avec message dynamique */}
       {isCompleted && (
         <Link
           to="/user/courses"
           className="block text-center text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors mt-2 cursor-pointer"
         >
-          Nouveau cours débloqué ! Retourner en arrière
+          {isLastCourse
+            ? "Voir mon catalogue terminé →"
+            : "Nouveau cours débloqué ! Retourner au catalogue →"}
         </Link>
       )}
     </div>

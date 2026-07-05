@@ -2,11 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-export default function CourseHeader({ title, category }) {
+export default function CourseHeader({ user, title, category }) {
   return (
     <div className="space-y-4">
       <Link
-        to="/user/courses"
+        to={user?.role === "user" ? "/user/courses" : "/admin/courses"}
         className="inline-flex items-center gap-2 text-xs text-white/50 hover:text-white transition-colors"
       >
         <ArrowLeft className="w-4 h-4" /> Retour au catalogue

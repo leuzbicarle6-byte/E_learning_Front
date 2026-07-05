@@ -16,7 +16,7 @@ import SupportBlock from "../../components/SupportBlock";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../backend/features/auth/authSlice";
 
-export default function CoursDetail() {
+export default function DetailsCours() {
   const { id } = useParams();
   const user = useSelector(selectCurrentUser);
 
@@ -121,7 +121,7 @@ export default function CoursDetail() {
     switch (courseTitleKey) {
       case "quest-ce-quune-machine":
         return <TabMere />;
-      case "microsoft-word":
+      case "word":
         return <WordDetail />;
       default:
         return (

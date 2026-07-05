@@ -64,12 +64,18 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-[#0a192f]/40 backdrop-blur-md border-b border-white/5 px-6 py-2 flex items-center justify-between sticky top-0 z-30">
       {/* 1. Titre de la page actuelle (Dynamique ou statique selon tes besoins) */}
-      <div className="hidden sm:block">
-        <h1 className="text-lg font-semibold text-white">Espace Apprenant</h1>
-        <p className="text-xs text-white/40">
-          Ravi de te revoir, {user?.first_name || "l'ami"} 👋
-        </p>
-      </div>
+      {user.role === "user" ? (
+        <div className="hidden sm:block">
+          <h1 className="text-lg font-semibold text-white">Espace Apprenant</h1>
+          <p className="text-xs text-white/40">
+            Ravi de te revoir, {user?.first_name || "l'ami"} 👋
+          </p>
+        </div>
+      ) : (
+        <div>
+          <h1 className="text-lg font-semibold text-white">Espace Admin</h1>
+        </div>
+      )}
 
       {/* Logo affiché uniquement sur Mobile (car la sidebar principale se cache) */}
       <div className="hidden items-center gap-2">
@@ -115,11 +121,13 @@ export default function Navbar() {
           )}
         </div>
 
-        <div className="relative">
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-md border border-emerald-500/20">
-            <Award className="w-5 h-5" /> {user?.total_xp} XP
-          </span>
-        </div>
+        {user.role === "user" && (
+          <div className="relative">
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-md border border-emerald-500/20">
+              <Award className="w-5 h-5" /> {user?.total_xp} XP
+            </span>
+          </div>
+        )}
 
         {/* COMPTE UTILISATEUR DROPDOWN */}
         <div className="relative" ref={dropdownRef}>
@@ -150,7 +158,7 @@ export default function Navbar() {
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-52 rounded-2xl border border-white/10 bg-[#0f223f] p-2 shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-1 duration-200">
               <Link
-                to="/user/profile"
+                to={user.role === "user" ? "/user/profile" : "/admin/profile"}
                 onClick={() => setDropdownOpen(false)}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/70 hover:bg-white/5 hover:text-white transition-colors cursor-pointer"
               >

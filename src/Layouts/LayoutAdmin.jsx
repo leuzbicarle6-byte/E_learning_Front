@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Menu } from "lucide-react";
-import SidebarUser from "../components/user/SidebarUser";
 import Navbar from "../components/Navbar";
+import SidebarA from "../components/admin/SidebarA";
 
 export default function LayoutUser() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,7 +20,7 @@ export default function LayoutUser() {
       )}
 
       {/* NOTRE SIDEBAR SÉPARÉE */}
-      <SidebarUser isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <SidebarA isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* ZONE DE CONTENU GLOBAL */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
@@ -28,7 +28,7 @@ export default function LayoutUser() {
         <Navbar />
 
         {/* 2. Le Main prend le relais avec un padding-top (pt-24 sur mobile / pt-20 sur desktop) pour laisser la place à la Navbar */}
-        <main className="flex-1 p-4 sm:p-6 md:p-10 pt-24 md:pt-20 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 md:p-10 pt-24 max-w-7xl w-full mx-auto">
           {/* Injecte le Dashboard ou le Profil ici sans blocage */}
           <Outlet />
         </main>

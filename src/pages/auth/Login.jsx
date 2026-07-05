@@ -3,16 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { GraduationCap, Mail, Lock, Loader2 } from "lucide-react";
 import { useLoginMutation } from "../../backend/features/auth/authApi";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../../backend/features/auth/authSlice"; // Ajuste le chemin du slice
+import { setCredentials } from "../../backend/features/auth/authSlice"; 
+import { toast } from "sonner"; // <-- Ajout de l'import Sonner
 
 export default function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Permet d'envoyer les tokens à Redux
+  const dispatch = useDispatch(); 
   const [login, { isLoading }] = useLoginMutation();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState("");
 
   function validate() {
     const newErrors = {};
@@ -35,28 +35,35 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setApiError("");
 
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
-    try {
-      const res = await login(form).unwrap();
+    // On utilise toast.promise pour envelopper la tentative de connexion
+    toast.promise(login(form).unwrap(), {
+      loading: "Vérification de vos identifiants...",
+      success: (res) => {
+        // Enregistrement des données de connexion dans Redux
+        dispatch(setCredentials(res));
 
-      dispatch(setCredentials(res));
-
-      // 3. Redirection avec les chemins exacts (sans fautes de frappe)
-      if (res?.user?.role === "super-admin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/user/dashboard");
+        // Redirection selon le rôle
+        if (res?.user?.role === "super-admin" || res?.user?.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
+        
+        return `Ravi de vous revoir, ${res?.user?.first_name || "l'ami"} !`;
+      },
+      error: (err) => {
+        // Traduction et interception intelligente des erreurs de Django
+        if (err?.data?.detail === "No active account found with the given credentials") {
+          return "Identifiants incorrects ou compte actuellement suspendu.";
+        }
+        return err?.data?.message || "Une erreur réseau est survenue.";
       }
-    } catch (err) {
-      setApiError(
-        err?.data?.message || "Connexion impossible. Vérifie tes identifiants.",
-      );
-    }
+    });
   }
 
   return (
@@ -82,12 +89,6 @@ export default function Login() {
           <p className="text-white/50 text-sm text-center mt-2">
             Content de te revoir. Continue ton apprentissage.
           </p>
-
-          {apiError && (
-            <div className="mt-5 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">
-              {apiError}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
             {/* Email */}

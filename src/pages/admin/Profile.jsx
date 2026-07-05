@@ -12,11 +12,11 @@ import {
   Key,
 } from "lucide-react";
 import ModalUpdateProfile from "../../components/modal/ModalUpdateProfile";
-import ModalUpdatePwd from "../../components/modal/ModalUpdateProfile";
+import ModalUpdatePwd from "../../components/modal/ModalUpdatePwd";
 
 export default function Profile() {
   const { data: profile, isLoading, isError } = useGetUserProfileQuery();
-
+  
   // États pour contrôler l'ouverture des modals
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPwdModalOpen, setIsPwdModalOpen] = useState(false);
@@ -87,9 +87,7 @@ export default function Profile() {
             <div className="flex items-center gap-3 text-sm">
               <Mail className="w-4 h-4 text-white/40" />
               <div>
-                <p className="text-[10px] text-white/40 uppercase">
-                  Adresse Email
-                </p>
+                <p className="text-[10px] text-white/40 uppercase">Adresse Email</p>
                 <p className="text-white/80 font-medium">{profile.email}</p>
               </div>
             </div>
@@ -113,18 +111,14 @@ export default function Profile() {
             <div className="flex items-center gap-3 text-sm">
               <Calendar className="w-4 h-4 text-white/40" />
               <div>
-                <p className="text-[10px] text-white/40 uppercase">
-                  Membre depuis le
-                </p>
+                <p className="text-[10px] text-white/40 uppercase">Membre depuis le</p>
                 <p className="text-white/80 font-medium">{memberSince}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <Award className="w-4 h-4 text-indigo-400" />
               <div>
-                <p className="text-[10px] text-white/40 uppercase">
-                  Niveau global
-                </p>
+                <p className="text-[10px] text-white/40 uppercase">Niveau global</p>
                 <p className="text-white/80 font-medium">
                   {profile.total_xp >= 100 ? "Apprenti Avancé" : "Débutant"}
                 </p>
@@ -154,10 +148,7 @@ export default function Profile() {
 
       {/* INCLUSION DES MODALS */}
       {isProfileModalOpen && (
-        <ModalUpdateProfile
-          profile={profile}
-          onClose={() => setIsProfileModalOpen(false)}
-        />
+        <ModalUpdateProfile profile={profile} onClose={() => setIsProfileModalOpen(false)} />
       )}
       {isPwdModalOpen && (
         <ModalUpdatePwd onClose={() => setIsPwdModalOpen(false)} />

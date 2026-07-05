@@ -18,7 +18,7 @@ export default function SidebarA({ isOpen, setIsOpen }) {
   // Liens d'administration
   const navigation = [
     {
-      name: "Vue d'ensemble",
+      name: "Dashboard",
       path: "/admin/dashboard",
       icon: <BarChart3 className="w-5 h-5" />,
     },

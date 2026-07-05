@@ -1,17 +1,22 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../../baseQuery";
-import { ENDPOINTS } from "../../endpoints"; // Correction de l'orthographe "endpoints" et utilisation de l'objet complet
+import { ENDPOINTS } from "../../endpoints"; 
 
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["UserProfile"],
+  // Ajout de "Users" dans les tagTypes pour gérer le cache du tableau admin
+  tagTypes: ["UserProfile", "Users"],
   endpoints: (builder) => ({
     
+    // ==========================================
+    //          PROFIL UTILISATEUR (USER)
+    // ==========================================
+
     // Récupérer le profil de l'utilisateur connecté
     getUserProfile: builder.query({
       query: () => ({
-        url: ENDPOINTS.profile.get, // Utilise la route centrale : `${API_BASE_URL}/profile/`
+        url: ENDPOINTS.profile.get, 
         method: "GET",
       }),
       providesTags: ["UserProfile"],
@@ -20,41 +25,74 @@ export const userApi = createApi({
     // Récupérer un profil par son ID
     getProfileUserById: builder.query({
       query: (id) => ({
-        url: ENDPOINTS.profile.getById(id), // Utilise la fonction fléchée : `${API_BASE_URL}/profile/${id}/`
+        url: ENDPOINTS.profile.getById(id), 
         method: "GET",
       }),
-      // On lie le tag à l'ID spécifique pour éviter de tout invalider inutilement en cache
       providesTags: (result, error, id) => [{ type: "UserProfile", id }],
     }),
 
     // Mettre à jour le profil
     updateUserProfile: builder.mutation({
       query: (profileData) => ({
-        url: ENDPOINTS.profile.update, // Correspond à : `${API_BASE_URL}/profile/update/`
-        method: "PUT", // Ou "PATCH" selon ce que ton Django attend
+        url: ENDPOINTS.profile.update, 
+        method: "PUT", 
         body: profileData,
       }),
-      // Invalide à la fois le profil global et potentiellement celui par ID si tu veux être d'une précision chirurgicale
       invalidatesTags: ["UserProfile"],
     }),
 
-    // Supprimer le compte
+    // Supprimer son propre compte
     deleteUserAccount: builder.mutation({
       query: (password) => ({
-        url: ENDPOINTS.profile.delete, // Correspond à : `${API_BASE_URL}/profile/delete/`
+        url: ENDPOINTS.profile.delete, 
         method: "DELETE",
         body: { password },
       }),
-      // Optionnel : tu peux invalider le tag ici si nécessaire, bien que le user va être déconnecté juste après
+    }),
+
+    // ==========================================
+    //        FONCTIONS D'ADMINISTRATION (ADMIN)
+    // ==========================================
+
+    // 1. Récupérer tous les utilisateurs (supporte la pagination)
+    getAllUsers: builder.query({
+      query: (page = 1) => ({
+        url: `${ENDPOINTS.admin.users}?page=${page}`, // S'aligne sur : users/admin/?page=X
+        method: "GET",
+      }),
+      providesTags: ["Users"],
+    }),
+
+    // 2. Activer / Désactiver un compte utilisateur (PATCH)
+    updateToggleUser: builder.mutation({
+      query: ({ id, is_active }) => ({
+        url: ENDPOINTS.admin.users, // S'aligne sur : users/admin/
+        method: "PATCH",
+        body: { id, is_active },
+      }),
+      invalidatesTags: ["Users"], // Recharge le tableau admin automatiquement
+    }),
+
+    // 3. Supprimer définitivement un utilisateur (DELETE)
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `${ENDPOINTS.admin.users}?id=${id}`, // S'aligne sur : users/admin/?id=X
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Users"], // Supprime la ligne du tableau automatiquement
     }),
     
   }),
 });
 
-// Export des hooks générés automatiquement par RTK Query
+// Export de TOUS les hooks générés automatiquement par RTK Query
 export const { 
   useGetUserProfileQuery, 
   useGetProfileUserByIdQuery, 
   useUpdateUserProfileMutation, 
-  useDeleteUserAccountMutation 
+  useDeleteUserAccountMutation,
+  // Nouveaux hooks Admin :
+  useGetAllUsersQuery,
+  useUpdateToggleUserMutation,
+  useDeleteUserMutation
 } = userApi;

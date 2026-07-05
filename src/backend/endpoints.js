@@ -39,9 +39,16 @@ export const ENDPOINTS = {
 
   profile: {
     get: `${PROFILE_ROOT}profile/`,
-    getById: (id) => `${PROFILE_ROOT}${id}/`,
-    update: `${PROFILE_ROOT}update/`,
+    getById: (id) => `${PROFILE_ROOT}profile/${id}/`,
+    update: `${PROFILE_ROOT}update/profile/`,
     delete: `${PROFILE_ROOT}delete/`,
+  },
+
+  // ========
+  // Admin
+  // ========
+  admin: {
+    users: `${USERS_ROOT}admin/`, // <-- Ajoute cette ligne si elle manque
   },
 
   // ========================================
@@ -49,7 +56,7 @@ export const ENDPOINTS = {
   // ========================================
 
   password: {
-    change: `${PASSWORD_ROOT}change/`,
+    change: `${PASSWORD_ROOT}change-password/`,
 
     requestReset: `${PASSWORD_ROOT}request-reset/`,
 
@@ -64,7 +71,9 @@ export const ENDPOINTS = {
   courses: {
     list: `${COURSES_ROOT}`,
     create: `${COURSES_ROOT}`,
-    meStats: `${COURSES_ROOT}me/stats/`,
+    // Correction de la ligne dans tes ENDPOINTS :
+    meStats: (id) =>
+      id ? `${COURSES_ROOT}me/stats/?id=${id}` : `${COURSES_ROOT}me/stats/`,
 
     detail: (id) => `${COURSES_ROOT}${id}/`,
     update: (id) => `${COURSES_ROOT}${id}/`,
