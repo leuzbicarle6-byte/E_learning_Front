@@ -24,10 +24,10 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [quizResult, setQuizResult] = useState(null);
 
-  // Chrono de 10 secondes par question
-  const [timeLeft, setTimeLeft] = useState(10);
+  // Chrono de 12 secondes par question
+  const [timeLeft, setTimeLeft] = useState(12);
 
-  // Références pour éviter les problèmes de fermetures (closures) dans le setInterval
+  // Références pour éviter les closures périmées dans les timers
   const currentQuestionIndexRef = useRef(currentQuestionIndex);
   const selectedAnswersRef = useRef(selectedAnswers);
 
@@ -39,41 +39,38 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
     selectedAnswersRef.current = selectedAnswers;
   }, [selectedAnswers]);
 
-  // Gestion du chrono de 10s par question
+  // 1. Décrémentation stricte du chrono toutes les secondes
   useEffect(() => {
     if (!isOpen || quizResult || !questions || questions.length === 0) return;
 
-    // Reset du chrono à 10s à chaque changement de question
-    setTimeLeft(10);
-
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleNextOrSubmit(); // Le temps est écoulé -> Question suivante ou soumission
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => clearInterval(timer);
   }, [isOpen, currentQuestionIndex, quizResult, questions]);
+
+  // 2. Action automatique dès que le chrono touche 0
+  useEffect(() => {
+    if (timeLeft === 0 && isOpen && !quizResult) {
+      handleNextOrSubmit();
+    }
+  }, [timeLeft]);
 
   // Fonction centrale pour avancer ou soumettre à la fin
   const handleNextOrSubmit = () => {
     const nextIndex = currentQuestionIndexRef.current + 1;
 
     if (questions && nextIndex < questions.length) {
-      // Passer à la question suivante
       setCurrentQuestionIndex(nextIndex);
+      setTimeLeft(12); // Reset du chrono pour la nouvelle question
     } else {
-      // C'était la dernière question -> Soumission globale automatique
       executeSubmission(selectedAnswersRef.current);
     }
   };
 
   const executeSubmission = async (answersToSend) => {
+    if (isSubmitting) return;
     try {
       const result = await submitAnswers({
         id: id,
@@ -93,14 +90,10 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
   const handleSelectChoice = (questionId, choiceId) => {
     if (quizResult) return;
 
-    // Enregistrer la réponse
     setSelectedAnswers((prev) => ({
       ...prev,
       [questionId]: choiceId,
     }));
-
-    // Optionnel : Si tu veux passer INSTANTANÉMENT à la question suivante dès qu'il clique :
-    // setTimeout(() => handleNextOrSubmit(), 200);
   };
 
   const handleCloseModal = () => {
@@ -108,6 +101,14 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
     setQuizResult(null);
     setCurrentQuestionIndex(0);
     setSelectedAnswers({});
+    setTimeLeft(12);
+  };
+
+  const handleRetry = () => {
+    setQuizResult(null);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers({});
+    setTimeLeft(12);
   };
 
   if (isLoading) {
@@ -128,32 +129,38 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
     );
   }
 
-  if (isCourseCompleted) {
-    return (
-      <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 text-emerald-400">
-        <Award className="w-5 h-5 shrink-0" />
-        <div>
-          <h4 className="font-bold text-xs">Module validé avec succès !</h4>
-          <p className="text-[11px] text-white/60">
-            Le quiz a été validé de manière permanente.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:scale-98 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/10 flex items-center justify-center gap-2 cursor-pointer"
-      >
-        <Award className="w-4 h-4" />
-        Passer le quiz chrono (10s/q)
-      </button>
+      {/* BOUTON D'OUVERTURE + STATUS DE VALIDATION */}
+      <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+        <button
+          onClick={() => {
+            setIsOpen(true);
+            setTimeLeft(12);
+          }}
+          className={`w-full sm:w-auto px-5 py-2.5 font-semibold text-xs rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-98 ${
+            isCourseCompleted
+              ? "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/5 shadow-slate-950/20"
+              : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/10"
+          }`}
+        >
+          <Award className="w-4 h-4" />
+          {isCourseCompleted
+            ? "Rejouer le quiz entraînement"
+            : "Passer le quiz chrono (12s/q)"}
+        </button>
 
+        {isCourseCompleted && (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-[11px] font-bold tracking-wide shadow-xs">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            VALIDÉ
+          </div>
+        )}
+      </div>
+
+      {/* MODAL DU QUIZ */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
           <div className="relative w-full max-w-xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
@@ -170,7 +177,7 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
                 )}
               </div>
 
-              {/* CHRONO DE 10 SECONDES (Masqué à l'affichage des résultats) */}
+              {/* CHRONO VISUEL */}
               {!quizResult && (
                 <div
                   className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-mono font-bold transition-colors ${
@@ -194,7 +201,7 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
 
             {/* BODY */}
             <div className="p-6 overflow-y-auto space-y-6">
-              {/* VUE RÉSULTATS (Une fois toutes les questions passées) */}
+              {/* VUE RÉSULTATS */}
               {quizResult && (
                 <div className="space-y-4">
                   <div
@@ -231,13 +238,16 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
                   </div>
 
                   <div className="pt-4 text-center flex justify-center gap-3">
-                    {!quizResult.passed && (
+                    {quizResult.passed ? (
                       <button
-                        onClick={() => {
-                          setQuizResult(null);
-                          setCurrentQuestionIndex(0);
-                          setSelectedAnswers({});
-                        }}
+                        onClick={handleCloseModal}
+                        className="px-5 py-2 text-xs font-semibold bg-emerald-600 text-white rounded-xl hover:bg-emerald-500 transition-colors cursor-pointer"
+                      >
+                        Bravo, vous avez réussi !
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleRetry}
                         className="px-5 py-2 text-xs font-semibold bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition-colors cursor-pointer"
                       >
                         Réessayer le défi
@@ -256,11 +266,11 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
               {/* VUE QUESTION ACTIVE */}
               {!quizResult && currentQuestion && (
                 <div className="space-y-4 animate-fade-in">
-                  {/* Barre de progression visuelle en haut de la question */}
+                  {/* Barre de progression du timer */}
                   <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-indigo-500 transition-all duration-1000 ease-linear"
-                      style={{ width: `${(timeLeft / 10) * 100}%` }}
+                      style={{ width: `${(timeLeft / 12) * 100}%` }}
                     />
                   </div>
 
@@ -296,17 +306,21 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
                     </div>
                   </div>
 
-                  {/* BOUTON SUIVANT MANUEL (Seulement si une réponse est cochée) */}
+                  {/* BOUTON SUIVANT / TERMINER */}
                   <div className="flex justify-end pt-2">
                     <button
                       type="button"
                       onClick={handleNextOrSubmit}
                       disabled={isSubmitting}
-                      className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/5 text-xs rounded-xl flex items-center gap-1.5 font-medium transition-all cursor-pointer active:scale-95"
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/5 text-xs rounded-xl flex items-center gap-1.5 font-medium transition-all cursor-pointer active:scale-95 disabled:opacity-50"
                     >
-                      {currentQuestionIndex === questions.length - 1
-                        ? "Terminer"
-                        : "Question suivante"}
+                      {isSubmitting ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : currentQuestionIndex === questions.length - 1 ? (
+                        "Terminer"
+                      ) : (
+                        "Question suivante"
+                      )}
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>

@@ -28,7 +28,7 @@ export default function Dashboard() {
   // Déclenchement automatique de la modal si l'étudiant a fini un module
   useEffect(() => {
     if (meStats && meStats.completed_courses > 0) {
-      setIsModalOpen(true);
+      setIsModalOpen(false);
     }
   }, [meStats]);
 
@@ -194,12 +194,15 @@ export default function Dashboard() {
             <Award className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-medium text-white">Progression Globale</h4>
+            <h4 className="text-sm font-medium text-white">
+              Progression Globale
+            </h4>
             <p className="text-xs text-white/40">
               <span className="text-sm font-bold text-white">
                 {meStats?.completion_percentage ?? 0}%
               </span>{" "}
-              de l'application ({meStats?.completed_courses ?? 0}/{meStats?.total_courses ?? 0} modules)
+              de l'application ({meStats?.completed_courses ?? 0}/
+              {meStats?.total_courses ?? 0} modules)
             </p>
           </div>
         </div>

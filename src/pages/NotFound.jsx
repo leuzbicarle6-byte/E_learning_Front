@@ -35,7 +35,7 @@ export default function NotFound() {
       {/* Bouton de retour */}
       <div className="mt-8">
         <Link
-          to={user.role === "user" ? "/user/dashboard" : "/admin/dashboard"}
+          to={user?.role === "user" ? "/user/dashboard" : "/admin/dashboard"}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-98"
         >
           <ArrowLeft className="w-4 h-4" />

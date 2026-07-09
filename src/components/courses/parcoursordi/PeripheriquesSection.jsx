@@ -5,6 +5,7 @@ import {
   Monitor,
   Printer,
   Volume2,
+  ArrowRight,
 } from "lucide-react";
 
 const peripherals = [
@@ -40,7 +41,7 @@ const peripherals = [
   },
 ];
 
-export default function PeripheriquesSection() {
+export default function PeripheriquesSection({ nextTab }) {
   return (
     <div className="mt-10 p-6 rounded-2xl bg-white/5 border border-white/10">
       <h2 className="text-xl font-bold text-white mb-4">
@@ -76,6 +77,19 @@ export default function PeripheriquesSection() {
           );
         })}
       </div>
+      <button
+        onClick={() => {
+          nextTab();
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }}
+        className="flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shadow-indigo-600/10 mt-4"
+      >
+        Tab suivant <ArrowRight className="w-3.5 h-3.5" />
+      </button>
     </div>
   );
 }

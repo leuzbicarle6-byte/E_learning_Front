@@ -16,6 +16,8 @@ const PROFILE_ROOT = `${API_BASE_URL}/users/`;
 const PASSWORD_ROOT = `${API_BASE_URL}/users/`;
 const COURSES_ROOT = `${API_BASE_URL}/courses/`;
 const PAYMENTS_ROOT = `${API_BASE_URL}/payments/`;
+const EXERCICES_ROOT = `${API_BASE_URL}/exos/`;
+const NOTIFICATIONS_ROOT = `${API_BASE_URL}/notifs/`;
 
 // ========================================
 // ENDPOINTS
@@ -58,10 +60,10 @@ export const ENDPOINTS = {
   password: {
     change: `${PASSWORD_ROOT}change-password/`,
 
-    requestReset: `${PASSWORD_ROOT}request-reset/`,
+    requestReset: `${PASSWORD_ROOT}password/request-reset/`,
 
-    resetConfirm: (uidb64, token) =>
-      `${PASSWORD_ROOT}reset-confirm/${uidb64}/${token}/`,
+    resetConfirm: (uid, token) =>
+      `${PASSWORD_ROOT}password/reset-confirm/${uid}/${token}/`,
   },
 
   // ========================================
@@ -87,6 +89,30 @@ export const ENDPOINTS = {
   // ========================================
   payments: {
     buyCourse: (courseId) => `${PAYMENTS_ROOT}courses/${courseId}/buy/`,
+  },
+
+  // ===========
+  // Exercice
+  // ===========
+  exercice: {
+    // ÉTUDIANT & GLOBAL
+    list: `${EXERCICES_ROOT}exercices/`, // GET : Liste tous les modules et exercices
+    allSubmissions: `${EXERCICES_ROOT}exercices/all-submissions/`,
+    detail: (id) => `${EXERCICES_ROOT}exercices/${id}/`, // GET : Récupère un module spécifique
+    updateStatus: `${EXERCICES_ROOT}exercices/update-status/`, // POST : Met à jour la progression de l'étudiant
+
+    // ENSEIGNANT / ADMIN (Gestion du catalogue)
+    create: `${EXERCICES_ROOT}exercices/`, // POST : Crée un nouveau module/exercice
+    update: (id) => `${EXERCICES_ROOT}exercices/${id}/`, // PUT/PATCH : Modifie un module/exercice existant
+    delete: (id) => `${EXERCICES_ROOT}exercices/${id}/`, // DELETE : Supprime un module/exercice
+  },
+
+  // ========================================
+  // Notifications
+  // ========================================
+  notif: {
+    list: `${NOTIFICATIONS_ROOT}notifications/`,
+    marked_read: (id) => `${NOTIFICATIONS_ROOT}notifications/${id}/mark-read/`,
   },
 };
 

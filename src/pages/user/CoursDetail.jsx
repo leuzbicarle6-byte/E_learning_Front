@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
   useGetCourseByIdQuery,
-  useGetCoursesQuery, // <-- Ajout de l'import pour récupérer la liste globale
+  useGetCoursesQuery,
   useCompleteCourseMutation,
 } from "../../backend/features/courses/coursesApi";
 import { Loader2, Timer, Lock, HelpCircle, CheckCircle2 } from "lucide-react";
@@ -12,9 +12,11 @@ import CourseHeader from "../../components/courses/CourseHeader";
 import CourseSidebar from "../../components/courses/CourseSidebar";
 import TabMere from "../../components/courses/TabMere";
 import WordDetail from "../../components/courses/word/WordDetail";
-import SupportBlock from "../../components/SupportBlock";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../backend/features/auth/authSlice";
+import { toast } from "sonner";
+import ExcelDetail from "../../components/courses/excel/ExcelDetail";
+import PowerPointDetail from "../../components/courses/pp/PowerPointDetail";
 
 export default function CoursDetail() {
   const { id } = useParams();
@@ -38,6 +40,9 @@ export default function CoursDetail() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [isQuizUnlocked, setIsQuizUnlocked] = useState(false);
 
+  // Garde pour éviter d'écraser le compte à rebours local à chaque cycle de rendu RTK Query
+  const currentCourseIdRef = useRef(null);
+
   const realCourse = Array.isArray(course) ? course[0] : course;
 
   // --- CALCUL SÉCURISÉ DE ISLASTCOURSE ---
@@ -45,7 +50,6 @@ export default function CoursDetail() {
     ? globalCourses
     : globalCourses?.results || [];
 
-  // On compare l'ID actuel (converti en Nombre) avec les ID de la liste globale
   const currentIndex = coursesArray.findIndex(
     (c) => Number(c.id) === Number(id),
   );
@@ -53,22 +57,22 @@ export default function CoursDetail() {
     currentIndex !== -1 && currentIndex === coursesArray.length - 1;
   // ----------------------------------------
 
-  // 1. Initialisation et déclenchement du chrono en BDD
+  // 1. Synchronisation avec les données serveur (Init & Changement de cours)
   useEffect(() => {
     if (realCourse) {
       setLocalProgress(realCourse.user_progress || 0);
-      setIsQuizUnlocked(realCourse.is_quiz_unlocked || false);
-      setTimeLeft(realCourse.time_remaining || 0);
 
-      if (realCourse.user_progress === 0 && !realCourse.is_quiz_unlocked) {
-        updateProgress({ id: id, progress_percentage: 0 })
-          .unwrap()
-          .then(() => refetch());
+      // Si on arrive sur la page ou qu'on change de cours, on synchronise le timer
+      if (currentCourseIdRef.current !== id) {
+        const initialTime = realCourse.time_remaining ?? 120;
+        setTimeLeft(initialTime);
+        setIsQuizUnlocked(initialTime === 0 || realCourse.is_quiz_unlocked);
+        currentCourseIdRef.current = id;
       }
     }
-  }, [realCourse, id, updateProgress, refetch]);
+  }, [realCourse, id]);
 
-  // 2. Compte à rebours visuel (Front-end)
+  // 2. Compte à rebours local strict (Décrémentation seconde par seconde)
   useEffect(() => {
     if (timeLeft <= 0 || isQuizUnlocked) return;
 
@@ -76,6 +80,9 @@ export default function CoursDetail() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
+          setIsQuizUnlocked(true);
+          // On rafraîchit les données pour mettre à jour l'état global de l'appli
+          refetch();
           return 0;
         }
         return prev - 1;
@@ -83,15 +90,7 @@ export default function CoursDetail() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeLeft, isQuizUnlocked]);
-
-  // 3. Surveillance de la fin du chrono pour débloquer le Quiz proprement
-  useEffect(() => {
-    if (timeLeft === 0 && !isQuizUnlocked && realCourse) {
-      setIsQuizUnlocked(true);
-      refetch();
-    }
-  }, [timeLeft, isQuizUnlocked, refetch, realCourse]);
+  }, [timeLeft, isQuizUnlocked, refetch]);
 
   const formatTime = (seconds) => {
     const h = Math.floor(seconds / 3600);
@@ -102,6 +101,7 @@ export default function CoursDetail() {
 
   const handleQuizPassed = async () => {
     setLocalProgress(100);
+    toast.success("Bravo vous avez terminé ce module !");
     try {
       await updateProgress({ id: id, progress_percentage: 100 }).unwrap();
     } catch (err) {
@@ -111,18 +111,17 @@ export default function CoursDetail() {
 
   const renderCourseContent = () => {
     if (!realCourse) return null;
+    const courseSlug = realCourse.slug;
 
-    const courseTitleKey = realCourse.slug
-      ?.toLowerCase()
-      .replace(/[^a-z0-9]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    switch (courseTitleKey) {
-      case "quest-ce-quune-machine":
+    switch (courseSlug) {
+      case "quest-ce-quun-ordinateur":
         return <TabMere />;
       case "microsoft-word":
         return <WordDetail />;
+      case "microsoft-excel":
+        return <ExcelDetail />;
+      case "microsoft-powerpoint":
+        return <PowerPointDetail />;
       default:
         return (
           <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3">
@@ -135,7 +134,6 @@ export default function CoursDetail() {
     }
   };
 
-  // Gestion combinée du chargement
   if (isCourseLoading || isListLoading) {
     return (
       <div className="text-center text-white/50 p-10">
@@ -165,12 +163,12 @@ export default function CoursDetail() {
           <CourseSidebar
             localProgress={localProgress}
             isSaving={isSaving}
-            isLastCourse={isLastCourse} // Envoie désormais la vraie valeur calculée
+            isLastCourse={isLastCourse}
           />
         </div>
       </div>
 
-      {/* SECTION BLOC DE VALIDATION FINALE (QUIZ) */}
+      {/* BLOC QUIZ / COMPTE À REBOURS */}
       <div className="mt-8">
         {isQuizUnlocked ? (
           <div
@@ -235,10 +233,6 @@ export default function CoursDetail() {
           </div>
         )}
       </div>
-
-      {localProgress === 100 && realCourse?.slug === "word" && (
-        <SupportBlock realCourse={realCourse} />
-      )}
     </div>
   );
 }

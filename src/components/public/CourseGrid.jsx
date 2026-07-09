@@ -2,12 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FaFileWord, FaPlus, FaRobot } from "react-icons/fa";
 import { Megaphone, Languages, Computer } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-/**
- * Données par défaut : une card par catégorie.
- * À remplacer plus tard par RTK Query, ex:
- * const { data: categories } = useGetCategoriesQuery();
- */
 const courses = [
   {
     id: 1,
@@ -60,6 +56,8 @@ const courses = [
  * Card simple
  */
 function CourseCard({ course, onEnroll, index }) {
+  const navigate = useNavigate();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -97,7 +95,7 @@ function CourseCard({ course, onEnroll, index }) {
 
       {/* Button */}
       <button
-        onClick={() => onEnroll?.(course)}
+        onClick={() => navigate("/login")}
         className="w-full mt-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors cursor-pointer"
       >
         Commencer

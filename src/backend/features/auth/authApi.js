@@ -75,8 +75,8 @@ export const authApi = createApi({
     }),
 
     confirmPasswordReset: builder.mutation({
-      query: ({ uidb64, token, ...data }) => ({
-        url: ENDPOINTS.password.resetConfirm(uidb64, token),
+      query: ({ uid, token, ...data }) => ({
+        url: ENDPOINTS.password.resetConfirm(uid, token),
         method: "POST",
         body: data,
       }),

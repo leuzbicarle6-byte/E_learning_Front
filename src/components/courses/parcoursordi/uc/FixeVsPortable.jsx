@@ -1,7 +1,7 @@
 import React from "react";
-import { Laptop, MonitorSmartphone, CheckCircle2, XCircle } from "lucide-react";
+import { Laptop, MonitorSmartphone, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 
-export default function FixeVsPortable() {
+export default function FixeVsPortable({ nextTab }) {
   return (
     <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-white space-y-6">
       <div>
@@ -81,6 +81,19 @@ export default function FixeVsPortable() {
           </div>
         </div>
       </div>
+      <button
+        onClick={() => {
+          nextTab();
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }}
+        className="flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shadow-indigo-600/10 mt-4"
+      >
+        Tab suivant <ArrowRight className="w-3.5 h-3.5" />
+      </button>
     </div>
   );
 }

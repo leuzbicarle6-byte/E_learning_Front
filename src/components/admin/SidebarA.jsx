@@ -7,6 +7,7 @@ import {
   LogOut,
   X,
   ShieldAlert,
+  FileCheck,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../backend/features/auth/authSlice";
@@ -31,6 +32,11 @@ export default function SidebarA({ isOpen, setIsOpen }) {
       name: "Utilisateurs",
       path: "/admin/users",
       icon: <Users className="w-5 h-5" />,
+    },
+     {
+      name: "Exercices",
+      path: "/admin/exercices",
+      icon: <FileCheck className="w-5 h-5" />,
     },
   ];
 

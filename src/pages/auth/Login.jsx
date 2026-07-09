@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GraduationCap, Mail, Lock, Loader2 } from "lucide-react";
+import { GraduationCap, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react"; // <-- Ajout de Eye et EyeOff
 import { useLoginMutation } from "../../backend/features/auth/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../backend/features/auth/authSlice"; 
-import { toast } from "sonner"; // <-- Ajout de l'import Sonner
+import { toast } from "sonner"; 
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export default function Login() {
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false); // <-- État pour afficher/masquer le mot de passe
 
   function validate() {
     const newErrors = {};
@@ -40,30 +41,33 @@ export default function Login() {
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
-    // On utilise toast.promise pour envelopper la tentative de connexion
-    toast.promise(login(form).unwrap(), {
-      loading: "Vérification de vos identifiants...",
-      success: (res) => {
-        // Enregistrement des données de connexion dans Redux
-        dispatch(setCredentials(res));
+    const toastId = toast.loading("Vérification de vos identifiants...");
 
-        // Redirection selon le rôle
-        if (res?.user?.role === "super-admin" || res?.user?.role === "admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/user/dashboard");
-        }
-        
-        return `Ravi de vous revoir, ${res?.user?.first_name || "l'ami"} !`;
-      },
-      error: (err) => {
-        // Traduction et interception intelligente des erreurs de Django
-        if (err?.data?.detail === "No active account found with the given credentials") {
-          return "Identifiants incorrects ou compte actuellement suspendu.";
-        }
-        return err?.data?.message || "Une erreur réseau est survenue.";
+    try {
+      const res = await login(form).unwrap();
+      dispatch(setCredentials(res));
+
+      toast.success(`Ravi de vous revoir, ${res?.user?.first_name || "l'ami"} !`, {
+        id: toastId,
+      });
+
+      if (res?.user?.role === "super-admin" || res?.user?.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/user/dashboard");
       }
-    });
+
+    } catch (err) {
+      let errorMessage = "Une erreur réseau est survenue.";
+      
+      if (err?.data?.detail === "No active account found with the given credentials") {
+        errorMessage = "Identifiants incorrects ou compte actuellement suspendu.";
+      } else if (err?.data?.message) {
+        errorMessage = err.data.message;
+      }
+
+      toast.error(errorMessage, { id: toastId });
+    }
   }
 
   return (
@@ -116,21 +120,44 @@ export default function Login() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm text-white/70 mb-1.5">
-                Mot de passe
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm text-white/70">
+                  Mot de passe
+                </label>
+                {/* Lien Mot de passe oublié */}
+                <Link
+                  to="/forgot-password" // <-- Ajuste le chemin selon ta route (ex: /fwd ou /forgot-password)
+                  className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                  Mot de passe oublié ?
+                </Link>
+              </div>
+              
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"} // <-- Devient "text" si showPassword est true
                   name="password"
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white placeholder:text-white/30 outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+                  className={`w-full pl-10 pr-12 py-2.5 rounded-xl bg-white/5 border text-white placeholder:text-white/30 outline-none focus:ring-2 focus:ring-indigo-500 transition ${
                     errors.password ? "border-rose-500/50" : "border-white/10"
                   }`}
                 />
+                
+                {/* Bouton pour basculer l'affichage du mot de passe */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-white/40 hover:text-white/70 transition-colors cursor-pointer"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
               {errors.password && (
                 <p className="text-rose-400 text-xs mt-1">{errors.password}</p>

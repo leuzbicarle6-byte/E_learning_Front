@@ -16,6 +16,14 @@ export default function TabMere() {
     { id: "raccourcie", label: "Raccourcies" },
   ];
 
+  const goToNextTab = () => {
+    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
+
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1].id);
+    }
+  };
+
   return (
     <div className="w-full">
       {/* NAV TABS */}
@@ -37,13 +45,13 @@ export default function TabMere() {
 
       {/* CONTENT */}
       <div className="rounded-2xl">
-        {activeTab === "intro" && <ParcoursOrdinateur />}
+        {activeTab === "intro" && <ParcoursOrdinateur nextTab={goToNextTab} />}
 
-        {activeTab === "peripheriques" && <PeripheriquesSection />}
+        {activeTab === "peripheriques" && <PeripheriquesSection nextTab={goToNextTab} />}
 
-        {activeTab === "uc" && <UniteCentrale />}
+        {activeTab === "uc" && <UniteCentrale nextTab={goToNextTab}/>}
 
-        {activeTab === "difference" && <FixeVsPortable />}
+        {activeTab === "difference" && <FixeVsPortable nextTab={goToNextTab}/>}
 
         {activeTab === "raccourcie" && <Raccourcies />}
 

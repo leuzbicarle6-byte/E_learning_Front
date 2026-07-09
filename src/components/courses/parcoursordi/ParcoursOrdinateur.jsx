@@ -6,7 +6,7 @@ import SlideContent from "./SlideContent";
 import SlideDots from "./SlideDots";
 import PeripheriquesSection from "./PeripheriquesSection";
 
-export default function ParcoursOrdinateur() {
+export default function ParcoursOrdinateur({ nextTab }) {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
 
@@ -72,12 +72,14 @@ export default function ParcoursOrdinateur() {
 
         {isLast ? (
           <button
-            onClick={() =>
+            onClick={() => {
+              nextTab();
+
               window.scrollTo({
-                top: document.body.scrollHeight,
+                top: 0,
                 behavior: "smooth",
-              })
-            }
+              });
+            }}
             className="flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shadow-indigo-600/10"
           >
             Tab suivant <ArrowRight className="w-3.5 h-3.5" />

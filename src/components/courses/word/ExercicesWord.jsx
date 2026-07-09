@@ -24,7 +24,7 @@ export default function ExercicesWord() {
           return (
             <div key={exo.id} className="relative group">
               {/* Bulle numérotée sur la ligne */}
-              <span className="absolute -left-[35px] top-0 flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 border-2 border-indigo-500 text-indigo-400 text-xs font-bold transition group-hover:bg-indigo-500 group-hover:text-white">
+              <span className="absolute -left-8.75 top-0 flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 border-2 border-indigo-500 text-indigo-400 text-xs font-bold transition group-hover:bg-indigo-500 group-hover:text-white">
                 {exo.id}
               </span>
 

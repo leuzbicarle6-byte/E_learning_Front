@@ -13,6 +13,7 @@ import {
 import { selectCurrentUser, logout } from "../backend/features/auth/authSlice"; // Ajuste le chemin selon ton projet
 import { useLogoutMutation } from "../backend/features/auth/authApi";
 import { resetApp } from "../backend/features/auth/resetActions";
+import NotificationBell from "./user/NotificationBell";
 
 export default function Navbar() {
   const [logoutBackend] = useLogoutMutation();
@@ -86,48 +87,8 @@ export default function Navbar() {
       {/* 2. Actions de Droite (Notifications + Profil) */}
       <div className="flex items-center gap-4 ml-auto">
         {/* MENU NOTIFICATIONS */}
-        <div className="relative" ref={notificationRef}>
-          <button
-            onClick={() => setNotificationOpen(!notificationOpen)}
-            className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
-          >
-            <Bell className="w-5 h-5" />
-            {/* Pastille rouge de notification */}
-            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-[#0a192f]"></span>
-          </button>
-
-          {/* Dropdown Notifications */}
-          {notificationOpen && (
-            <div className="absolute right-0 mt-2 w-80 rounded-2xl border border-white/10 bg-[#0f223f] p-4 shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-1 duration-200">
-              <div className="flex items-center justify-between pb-2 border-b border-white/5">
-                <span className="text-xs font-semibold text-white">
-                  Notifications
-                </span>
-                <button className="text-[10px] text-indigo-400 hover:underline cursor-pointer">
-                  Tout marquer lu
-                </button>
-              </div>
-              <div className="mt-3 space-y-3 max-h-60 overflow-y-auto">
-                <div className="p-2 rounded-xl bg-white/5 border border-white/5 text-xs text-white/70">
-                  <p className="font-medium text-white">
-                    🎉 Nouveau cours disponible !
-                  </p>
-                  <p className="text-white/40 mt-0.5">
-                    Découvre notre formation sur l'IA.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {user.role === "user" && (
-          <div className="relative">
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-md border border-emerald-500/20">
-              <Award className="w-5 h-5" /> {user?.total_xp} XP
-            </span>
-          </div>
-        )}
+        
+        <NotificationBell/>
 
         {/* COMPTE UTILISATEUR DROPDOWN */}
         <div className="relative" ref={dropdownRef}>

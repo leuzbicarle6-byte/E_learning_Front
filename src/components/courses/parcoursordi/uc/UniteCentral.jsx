@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { HardDrive } from "lucide-react";
+import { ArrowRight, HardDrive } from "lucide-react";
 import { PARTS } from "./data";
 import PartCard from "./PartCard";
 
-export default function UniteCentrale() {
+export default function UniteCentrale({ nextTab }) {
   const [openId, setOpenId] = useState(PARTS[0].id);
 
   const toggle = (id) => setOpenId((prev) => (prev === id ? null : id));
@@ -34,6 +34,19 @@ export default function UniteCentrale() {
             onToggle={() => toggle(part.id)}
           />
         ))}
+        <button
+          onClick={() => {
+            nextTab();
+
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          }}
+          className="flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shadow-indigo-600/10 mt-4"
+        >
+          Tab suivant <ArrowRight className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );

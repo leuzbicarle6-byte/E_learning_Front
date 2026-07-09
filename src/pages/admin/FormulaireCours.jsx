@@ -19,7 +19,6 @@ export default function FormulaireCours({
 
   const [formData, setFormData] = useState({
     title: "",
-    slug: "",
     description: "",
     category: "",
     price: "",
@@ -32,7 +31,6 @@ export default function FormulaireCours({
       const cours = Array.isArray(initialData) ? initialData[0] : initialData;
       setFormData({
         title: cours.title || "",
-        slug: cours.slug || "",
         description: cours.description || "",
         category: cours.category || "",
         price: cours.price || "",
@@ -43,7 +41,7 @@ export default function FormulaireCours({
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     setFormData((prev) => {
       const updatedFields = {
         ...prev,
@@ -61,21 +59,28 @@ export default function FormulaireCours({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const payload = {
       ...formData,
-      slug: formData.slug || slugify(formData.title), // Sécurité : s'assure qu'un slug existe
       price: formData.is_free ? 0 : parseFloat(formData.price) || 0,
     };
 
     // On enveloppe l'action asynchrone dans un toast.promise
     toast.promise(onSubmit(payload), {
-      loading: isEdit ? "Enregistrement des modifications..." : "Création du cours en cours...",
-      success: () => isEdit ? "Le cours a été modifié avec succès !" : "Le cours a été publié !",
+      loading: isEdit
+        ? "Enregistrement des modifications..."
+        : "Création du cours en cours...",
+      success: () =>
+        isEdit
+          ? "Le cours a été modifié avec succès !"
+          : "Le cours a été publié !",
       error: (err) => {
-        const errorDetail = err?.data?.slug?.[0] || err?.data?.detail || "Une erreur est survenue.";
+        const errorDetail =
+          err?.data?.slug?.[0] ||
+          err?.data?.detail ||
+          "Une erreur est survenue.";
         return `Échec : ${errorDetail}`;
-      }
+      },
     });
   };
 
@@ -110,12 +115,15 @@ export default function FormulaireCours({
           placeholder="Ex: Maîtriser les bases de Microsoft Word"
           className="w-full bg-white/5 border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm transition-colors outline-none placeholder:text-white/20"
         />
-        
+
         {/* Visualisation du slug généré sous le titre */}
         {formData.slug && (
           <div className="flex items-center gap-1.5 px-1 text-xs text-white/40 font-mono">
             <Link2 className="w-3 h-3 text-indigo-400" />
-            <span>URL générée : <span className="text-indigo-300">{formData.slug}</span></span>
+            <span>
+              URL générée :{" "}
+              <span className="text-indigo-300">{formData.slug}</span>
+            </span>
           </div>
         )}
       </div>

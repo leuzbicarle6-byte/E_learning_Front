@@ -1,0 +1,150 @@
+[
+  {
+    "id": "ordinateur",
+    "title": "Maîtriser l'ordinateur",
+    "icon": "💻",
+    "exercises": [
+      {
+        "id": 1,
+        "title": "Gestion des fichiers et dossiers",
+        "desc": "Créez sur votre bureau un dossier 'LearnTech_Formations'. À l'intérieur, générez trois sous-dossiers : 'Cours', 'Exercices' et 'Ressources'.",
+        "difficulty": "Débutant"
+      },
+      {
+        "id": 2,
+        "title": "Les raccourcis clavier essentiels",
+        "desc": "Ouvrez deux fenêtres côte à côte. Utilisez Ctrl+C / Ctrl+V pour dupliquer un document texte sans toucher à la souris, puis réalisez une capture d'écran de votre résultat.",
+        "difficulty": "Débutant"
+      },
+      {
+        "id": 3,
+        "title": "Navigation web et sécurité",
+        "desc": "Recherchez un article spécifique en utilisant les guillemets sur Google. Configurez ensuite un mot de passe fort (12 caractères, majuscules, chiffres, symboles) dans un fichier texte.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 4,
+        "title": "Installation et extensions",
+        "desc": "Téléchargez et installez proprement un navigateur alternatif (ex: Brave ou Firefox). Ajoutez-y une extension de blocage publicitaire et vérifiez son activation.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 5,
+        "title": "Sauvegarde et Cloud",
+        "desc": "Créez un compte gratuit sur Google Drive ou OneDrive. Importez-y votre dossier 'LearnTech_Formations' et générez un lien de partage privé.",
+        "difficulty": "Avancé"
+      }
+    ]
+  },
+  {
+    "id": "word",
+    "title": "Microsoft Word",
+    "icon": "📝",
+    "exercises": [
+      {
+        "id": 1,
+        "title": "Mise en forme de texte",
+        "desc": "Copiez un texte brut. Appliquez une police Arial 11, un alignement justifié, un interligne de 1.5, et créez une liste à puces personnalisée pour les mots-clés.",
+        "difficulty": "Débutant"
+      },
+      {
+        "id": 2,
+        "title": "Création d'un CV moderne",
+        "desc": "À l'aide d'un tableau à lignes invisibles et de marges personnalisées (2cm), séparez votre profil en deux colonnes distinctes pour une mise en page pro.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 3,
+        "title": "Styles et Table des matières",
+        "desc": "Rédigez un mini-rapport de 3 pages. Appliquez les styles natifs 'Titre 1' et 'Titre 2', puis insérez un sommaire automatique au début du document.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 4,
+        "title": "Insertion d'objets",
+        "desc": "Insérez une image dans un document. Modifiez son habillage en mode 'Encadré', ajoutez une bordure fine et un en-tête contenant votre nom.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 5,
+        "title": "Publipostage",
+        "desc": "Créez une lettre d'invitation type. Liez-la à une liste de 5 contacts fictifs pour générer automatiquement 5 lettres personnalisées uniques.",
+        "difficulty": "Avancé"
+      }
+    ]
+  },
+  {
+    "id": "excel",
+    "title": "Microsoft Excel",
+    "icon": "📊",
+    "exercises": [
+      {
+        "id": 1,
+        "title": "Les bases du tableur",
+        "desc": "Créez un tableau de dépenses mensuelles. Formatez les nombres en Monétaire (€) et appliquez la formule =SOMME pour calculer le total global.",
+        "difficulty": "Débutant"
+      },
+      {
+        "id": 2,
+        "title": "Formules logiques et conditions",
+        "desc": "Ajoutez une colonne 'Statut' dans une liste de notes. Utilisez la fonction =SI() pour afficher automatiquement 'Admis' si la note est >= 10, sinon 'Ajourné'.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 3,
+        "title": "Création de Graphiques",
+        "desc": "Sélectionnez vos données de ventes trimestrielles et générez un graphique en histogramme 3D. Personnalisez les titres et les couleurs des séries.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 4,
+        "title": "La puissance du RECHERCHEV",
+        "desc": "À partir d'un ID produit, utilisez la formule =RECHERCHEV() ou =RECHERCHEX() pour rapatrier automatiquement son prix depuis une feuille catalogue.",
+        "difficulty": "Avancé"
+      },
+      {
+        "id": 5,
+        "title": "Tableaux Croisés Dynamiques",
+        "desc": "Importez une base de données de 100 lignes. Générez un TCD pour extraire instantanément le total des ventes par région et par vendeur.",
+        "difficulty": "Avancé"
+      }
+    ]
+  },
+  {
+    "id": "powerpoint",
+    "title": "PowerPoint",
+    "icon": "📉",
+    "exercises": [
+      {
+        "id": 1,
+        "title": "Ma première présentation",
+        "desc": "Créez un diaporama de 3 slides sur le thème de votre choix. Appliquez un thème graphique propre et soignez l'harmonie des couleurs.",
+        "difficulty": "Débutant"
+      },
+      {
+        "id": 2,
+        "title": "Transitions et Animations",
+        "desc": "Ajoutez une transition 'Fondu' entre vos slides. Configurez l'apparition de vos blocs de texte un par un au clic grâce aux animations d'entrée.",
+        "difficulty": "Débutant"
+      },
+      {
+        "id": 3,
+        "title": "Insertion de médias",
+        "desc": "Insérez une icône vectorielle et une courte vidéo explicative dans votre slide. Configurez la vidéo pour qu'elle démarre automatiquement.",
+        "difficulty": "Intermédiaire"
+      },
+      {
+        "id": 4,
+        "title": "Le Masque de diapositive",
+        "desc": "Basculez dans l'affichage 'Masque'. Ajoutez le logo de LearnTech sur la slide maîtresse pour l'appliquer automatiquement à toutes vos présentations.",
+        "difficulty": "Avancé"
+      },
+      {
+        "id": 5,
+        "title": "Soutenance de projet",
+        "desc": "Simulez un pitch professionnel. Créez une présentation de 5 diapositives maximum configurée en défilement automatique minuté (20 secondes par slide).",
+        "difficulty": "Avancé"
+      }
+    ]
+  }
+]

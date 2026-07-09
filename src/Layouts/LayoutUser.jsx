@@ -24,12 +24,9 @@ export default function LayoutUser() {
 
       {/* ZONE DE CONTENU GLOBAL */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        {/* 1. La Navbar est posée à la racine de la zone de contenu */}
         <Navbar />
 
-        {/* 2. Le Main prend le relais avec un padding-top (pt-24 sur mobile / pt-20 sur desktop) pour laisser la place à la Navbar */}
-        <main className="flex-1 p-4 sm:p-6 md:p-10 pt-24 md:pt-20 max-w-7xl w-full mx-auto">
-          {/* Injecte le Dashboard ou le Profil ici sans blocage */}
+        <main className="flex-1 p-4 sm:p-6 md:p-10 pt-24 md:pt-8 max-w-7xl w-full mx-auto">
           <Outlet />
         </main>
       </div>
