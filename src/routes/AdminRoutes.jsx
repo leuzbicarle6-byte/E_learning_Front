@@ -3,7 +3,7 @@ import AllCourses from "../pages/admin/AllCourses";
 import DashboardA from "../pages/admin/DashboardA";
 import DetailsCours from "../pages/admin/DetailsCours";
 import EditCours from "../pages/admin/EditCours";
-import Exercices from "../pages/admin/exos/Exercices";
+import ExercicesAdmin from "../pages/admin/exos/ExercicesAdmin";
 import ListeUsers from "../pages/admin/ListeUsers";
 import Profile from "../pages/admin/Profile";
 import UserDetails from "../pages/admin/UserDetails";
@@ -17,7 +17,7 @@ const AdminRoutes = [
   { path: "courses/details/:id", element: <DetailsCours /> },
   { path: "courses/edit/:id", element: <EditCours /> },
   { path: "detail/user/:id", element: <UserDetails /> },
-  { path: "exercices", element: <Exercices /> },
+  { path: "exercices", element: <ExercicesAdmin /> },
 ];
 
 export default AdminRoutes;

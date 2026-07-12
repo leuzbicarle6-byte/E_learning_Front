@@ -13,9 +13,25 @@ export const coursesApi = createApi({
     // GET ALL COURSES
     // ========================================
 
+    getCoursesCount: builder.query({
+      query: () => ({
+        url: ENDPOINTS.courses.count,
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+
     getCourses: builder.query({
       query: () => ({
         url: ENDPOINTS.courses.list,
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+
+    getCoursesTabs: builder.query({
+      query: () => ({
+        url: ENDPOINTS.courses.coursTab,
         method: "GET",
       }),
       providesTags: ["Courses"],
@@ -168,7 +184,9 @@ export const coursesApi = createApi({
 
 export const {
   // Queries
+  useGetCoursesCountQuery,
   useGetCoursesQuery,
+  useGetCoursesTabsQuery,
   useGetCourseByIdQuery,
   useGetQuizQuestionsQuery,
   useGetMeStatsQuery,

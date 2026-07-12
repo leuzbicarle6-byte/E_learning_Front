@@ -51,6 +51,7 @@ export const ENDPOINTS = {
   // ========
   admin: {
     users: `${USERS_ROOT}admin/`, // <-- Ajoute cette ligne si elle manque
+    count_users: `${USERS_ROOT}stats/users/`,
   },
 
   // ========================================
@@ -73,6 +74,8 @@ export const ENDPOINTS = {
   courses: {
     list: `${COURSES_ROOT}`,
     create: `${COURSES_ROOT}`,
+    count: `${COURSES_ROOT}count/courses/`,
+    coursTab: `${COURSES_ROOT}tabs/`,
     // Correction de la ligne dans tes ENDPOINTS :
     meStats: (id) =>
       id ? `${COURSES_ROOT}me/stats/?id=${id}` : `${COURSES_ROOT}me/stats/`,

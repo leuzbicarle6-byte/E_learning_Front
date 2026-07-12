@@ -17,6 +17,7 @@ import { selectCurrentUser } from "../../backend/features/auth/authSlice";
 import { toast } from "sonner";
 import ExcelDetail from "../../components/courses/excel/ExcelDetail";
 import PowerPointDetail from "../../components/courses/pp/PowerPointDetail";
+import SystemDetail from "../../components/courses/system/SystemDetail";
 
 export default function CoursDetail() {
   const { id } = useParams();
@@ -122,6 +123,8 @@ export default function CoursDetail() {
         return <ExcelDetail />;
       case "microsoft-powerpoint":
         return <PowerPointDetail />;
+      case "maitriser-son-bureau-et-ses-fichiers":
+        return <SystemDetail />;
       default:
         return (
           <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3">

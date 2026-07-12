@@ -3,15 +3,34 @@ import { ArrowRight, Users, BookOpen, Award } from "lucide-react";
 import "../../css/hero.css";
 import ModalInformation from "./ModalInformation";
 import { Link } from "react-router-dom";
-
-const stats = [
-  { icon: Users, value: "250+", label: "Apprenants accompagnés" },
-  { icon: BookOpen, value: "35+", label: "Cours disponibles" },
-  { icon: Award, value: "98%", label: "Taux de réussite" },
-];
+import { useGetStatsUserQuery } from "../../backend/features/user/userApi";
+import { useGetCoursesCountQuery } from "../../backend/features/courses/coursesApi";
 
 export default function Hero() {
   const [modal, setModal] = useState(false);
+
+  // Récupération des données depuis RTK Query
+  const { data: userCount } = useGetStatsUserQuery();
+  const { data: coursCount } = useGetCoursesCountQuery();
+
+  // Définition dynamique des statistiques avec valeurs de secours (fallback)
+  const stats = [
+    { 
+      icon: Users, 
+      value: userCount?.total_users !== undefined ? `${userCount.total_users}` : "...", 
+      label: "Apprenants accompagnés" 
+    },
+    { 
+      icon: BookOpen, 
+      value: coursCount?.total_cours !== undefined ? `${coursCount.total_cours}` : "...", 
+      label: "Cours disponibles" 
+    },
+    { 
+      icon: Award, 
+      value: "98%", 
+      label: "Taux de réussite" 
+    },
+  ];
 
   return (
     <section className="relative overflow-hidden px-6 py-24 md:py-32 bg-[#050816]">
@@ -20,14 +39,8 @@ export default function Hero() {
 
       {/* Bulles animées */}
       <div className="hero-bubbles">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -37,7 +50,7 @@ export default function Hero() {
         </span>
 
         {/* Titre */}
-        <h1 className="hero-title font-black text-md   md:text-6xl text-white tracking-tight leading-tight">
+        <h1 className="hero-title font-black text-md md:text-6xl text-white tracking-tight leading-tight">
           Vous débutez en informatique ?
           <br />
           <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400">
@@ -53,19 +66,13 @@ export default function Hero() {
 
         {/* Boutons */}
         <div className="hero-buttons mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            to={"/login"}
-            className="group flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 transition-all duration-300 shadow-xl shadow-indigo-950/40 cursor-pointer"
-          >
-            Commencer maintenant
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
+          
 
           <button
             onClick={() => setModal(!modal)}
             className="px-7 py-3.5 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-md text-white font-medium hover:bg-white/10 transition-all duration-300 cursor-pointer"
           >
-            savoir plus
+            En savoir plus
           </button>
         </div>
 
@@ -94,6 +101,7 @@ export default function Hero() {
           ))}
         </div>
       </div>
+      
       {modal && (
         <ModalInformation isOpen={modal} onClose={() => setModal(false)} />
       )}

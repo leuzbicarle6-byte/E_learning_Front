@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../../baseQuery";
-import { ENDPOINTS } from "../../endpoints"; 
+import { ENDPOINTS } from "../../endpoints";
 
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -8,15 +8,23 @@ export const userApi = createApi({
   // Ajout de "Users" dans les tagTypes pour gérer le cache du tableau admin
   tagTypes: ["UserProfile", "Users"],
   endpoints: (builder) => ({
-    
     // ==========================================
     //          PROFIL UTILISATEUR (USER)
     // ==========================================
 
+    // Nombre de users
+    getStatsUser: builder.query({
+      query: () => ({
+        url: ENDPOINTS.admin.count_users,
+        method: "GET",
+      }),
+      providesTags: ["UserProfile"],
+    }),
+
     // Récupérer le profil de l'utilisateur connecté
     getUserProfile: builder.query({
       query: () => ({
-        url: ENDPOINTS.profile.get, 
+        url: ENDPOINTS.profile.get,
         method: "GET",
       }),
       providesTags: ["UserProfile"],
@@ -25,7 +33,7 @@ export const userApi = createApi({
     // Récupérer un profil par son ID
     getProfileUserById: builder.query({
       query: (id) => ({
-        url: ENDPOINTS.profile.getById(id), 
+        url: ENDPOINTS.profile.getById(id),
         method: "GET",
       }),
       providesTags: (result, error, id) => [{ type: "UserProfile", id }],
@@ -34,8 +42,8 @@ export const userApi = createApi({
     // Mettre à jour le profil
     updateUserProfile: builder.mutation({
       query: (profileData) => ({
-        url: ENDPOINTS.profile.update, 
-        method: "PUT", 
+        url: ENDPOINTS.profile.update,
+        method: "PUT",
         body: profileData,
       }),
       invalidatesTags: ["UserProfile"],
@@ -44,7 +52,7 @@ export const userApi = createApi({
     // Supprimer son propre compte
     deleteUserAccount: builder.mutation({
       query: (password) => ({
-        url: ENDPOINTS.profile.delete, 
+        url: ENDPOINTS.profile.delete,
         method: "DELETE",
         body: { password },
       }),
@@ -81,18 +89,18 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["Users"], // Supprime la ligne du tableau automatiquement
     }),
-    
   }),
 });
 
 // Export de TOUS les hooks générés automatiquement par RTK Query
-export const { 
-  useGetUserProfileQuery, 
-  useGetProfileUserByIdQuery, 
-  useUpdateUserProfileMutation, 
+export const {
+  useGetStatsUserQuery,
+  useGetUserProfileQuery,
+  useGetProfileUserByIdQuery,
+  useUpdateUserProfileMutation,
   useDeleteUserAccountMutation,
   // Nouveaux hooks Admin :
   useGetAllUsersQuery,
   useUpdateToggleUserMutation,
-  useDeleteUserMutation
+  useDeleteUserMutation,
 } = userApi;
