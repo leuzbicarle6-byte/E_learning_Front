@@ -41,7 +41,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  to="/courses"
+                  to="/login"
                   className="hover:text-indigo-400 transition-colors"
                 >
                   Tous les cours
@@ -49,7 +49,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/pricing"
+                  to="#"
                   className="hover:text-indigo-400 transition-colors"
                 >
                   Tarifs
@@ -74,7 +74,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  to="/terms"
+                  to="#"
                   className="hover:text-indigo-400 transition-colors"
                 >
                   Conditions d'utilisation
@@ -82,7 +82,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/privacy"
+                  to="#"
                   className="hover:text-indigo-400 transition-colors"
                 >
                   Confidentialité

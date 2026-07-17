@@ -15,20 +15,26 @@ export default function Hero() {
 
   // Définition dynamique des statistiques avec valeurs de secours (fallback)
   const stats = [
-    { 
-      icon: Users, 
-      value: userCount?.total_users !== undefined ? `${userCount.total_users}` : "...", 
-      label: "Apprenants accompagnés" 
+    {
+      icon: Users,
+      value:
+        userCount?.total_users !== undefined
+          ? `${userCount.total_users}`
+          : "...",
+      label: "Apprenants accompagnés",
     },
-    { 
-      icon: BookOpen, 
-      value: coursCount?.total_cours !== undefined ? `${coursCount.total_cours}` : "...", 
-      label: "Cours disponibles" 
+    {
+      icon: BookOpen,
+      value:
+        coursCount?.total_cours !== undefined
+          ? `${coursCount.total_cours}`
+          : "...",
+      label: "Cours disponibles",
     },
-    { 
-      icon: Award, 
-      value: "98%", 
-      label: "Taux de réussite" 
+    {
+      icon: Award,
+      value: "98%",
+      label: "Taux de réussite",
     },
   ];
 
@@ -39,8 +45,14 @@ export default function Hero() {
 
       {/* Bulles animées */}
       <div className="hero-bubbles">
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -66,7 +78,12 @@ export default function Hero() {
 
         {/* Boutons */}
         <div className="hero-buttons mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          
+          <Link
+            to={"/about"}
+            className="px-7 py-3.5 rounded-2xl border border-white/15 bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 text-white font-medium hover:bg-purple-700 transition-all duration-300 cursor-pointer"
+          >
+            A propos de nous
+          </Link>
 
           <button
             onClick={() => setModal(!modal)}
@@ -101,7 +118,7 @@ export default function Hero() {
           ))}
         </div>
       </div>
-      
+
       {modal && (
         <ModalInformation isOpen={modal} onClose={() => setModal(false)} />
       )}

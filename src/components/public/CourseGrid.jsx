@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaFileWord, FaRobot } from "react-icons/fa";
 import { Megaphone, Languages, Computer, Lock, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { CgSmartphoneShake } from "react-icons/cg";
 
 const courses = [
   {
@@ -26,23 +27,13 @@ const courses = [
     status: "available",
   },
   {
-    id: 2,
-    title: "Marketing",
-    category: "Marketing",
-    description:
-      "Apprends à promouvoir une activité en ligne : réseaux sociaux, publicités, premiers clients.",
-    level: "Débutant à Intermédiaire",
-    icon: <Megaphone className="w-10 h-10 text-rose-400" />,
-    status: "coming_soon",
-  },
-  {
     id: 3,
-    title: "Langue",
-    category: "Langue",
+    title: "Maîtrise ton téléphone",
+    category: "Informatique",
     description:
-      "Renforce ton français ou démarre l'anglais avec des cours adaptés à ton rythme.",
+      "Dompte ton smartphone ! Apprends à utiliser l'assistant Google, gérer ton système et toutes ses fonctionnalités.",
     level: "Débutant à Intermédiaire",
-    icon: <Languages className="w-10 h-10 text-purple-400" />,
+    icon: <CgSmartphoneShake className="w-10 h-10 text-purple-400" />,
     status: "coming_soon",
   },
   {
@@ -153,7 +144,7 @@ export default function CourseGrid({ items = courses, onEnroll }) {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
         {items.map((course, index) => (
           <CourseCard
             key={course.id}

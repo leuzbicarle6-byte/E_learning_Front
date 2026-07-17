@@ -3,14 +3,18 @@ import Header from "../../components/public/Header";
 import Hero from "../../components/public/Hero";
 import CourseGrid from "../../components/public/CourseGrid";
 import Footer from "../../components/public/Footer";
+import LevelsSupport from "../../components/public/LevelsSupport";
+import Testimonials from "../../components/public/Testimonials";
 
 export default function Home() {
   return (
     <div>
-      <Header/>
-      <Hero/>
-      <CourseGrid/>
-      <Footer/>
+      <Header />
+      <Hero />
+      <LevelsSupport />
+      <CourseGrid />
+      <Testimonials/>
+      <Footer />
     </div>
   );
 }
