@@ -28,20 +28,20 @@ const courses = [
   },
   {
     id: 3,
-    title: "Maîtrise ton téléphone",
+    title: "Programmation",
     category: "Informatique",
     description:
-      "Dompte ton smartphone ! Apprends à utiliser l'assistant Google, gérer ton système et toutes ses fonctionnalités.",
+      "Maîtrise le code ! Apprends à écrire tes premiers programmes, à comprendre la logique de la programmation et à créer tes propres applications de A à Z.",
     level: "Débutant à Intermédiaire",
     icon: <CgSmartphoneShake className="w-10 h-10 text-purple-400" />,
     status: "coming_soon",
   },
   {
     id: 5,
-    title: "IA & Automatisation",
-    category: "Intelligence artificielle",
+    title: "Maintenance Informatique",
+    category: "Maintenance",
     description:
-      "Apprends à utiliser l’intelligence artificielle comme un véritable assistant personnel : écrire, créer, automatiser et améliorer ta productivité sans être expert en informatique.",
+      "Deviens expert en maintenance informatique ! Apprends à diagnostiquer les pannes, à entretenir et réparer ordinateurs et systèmes, et à assurer leur bon fonctionnement au quotidien.",
     level: "Débutant",
     icon: <FaRobot className="w-10 h-10 text-indigo-400" />,
     status: "coming_soon",
