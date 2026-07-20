@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FaFileWord, FaRobot } from "react-icons/fa";
 import { Megaphone, Languages, Computer, Lock, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { CgSmartphoneShake } from "react-icons/cg";
+import { CgLaptop, CgSmartphoneShake } from "react-icons/cg";
 
 const courses = [
   {
@@ -33,7 +33,7 @@ const courses = [
     description:
       "Maîtrise le code ! Apprends à écrire tes premiers programmes, à comprendre la logique de la programmation et à créer tes propres applications de A à Z.",
     level: "Débutant à Intermédiaire",
-    icon: <CgSmartphoneShake className="w-10 h-10 text-purple-400" />,
+    icon: <CgLaptop className="w-10 h-10 text-purple-400" />,
     status: "coming_soon",
   },
   {

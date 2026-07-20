@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Gift, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom"; // Importation pour la navigation vers l'ID
+import { Link } from "react-router-dom";
 import { freeCoursesData } from "./gratuit/freeCoursesData";
 
 export default function CoursGratuit() {
@@ -24,7 +24,7 @@ export default function CoursGratuit() {
           </span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
             Commence par les{" "}
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
               cours gratuits
             </span>
           </h1>
@@ -46,8 +46,8 @@ export default function CoursGratuit() {
             >
               {/* Le conteneur devient un composant Link pour la redirection vers la route dynamique */}
               <Link
-                to={`/user/free-courses/${course.id}`} 
-                className={`flex flex-col justify-between h-64 bg-gradient-to-br ${course.color} border ${course.border} rounded-2xl p-6 hover:-translate-y-1 transition-all duration-300 cursor-pointer group`}
+                to={`/user/free-courses/${course.id}`}
+                className={`flex flex-col justify-between h-64 bg-linear-to-br ${course.color} border ${course.border} rounded-2xl p-6 hover:-translate-y-1 transition-all duration-300 cursor-pointer group`}
               >
                 <div>
                   <div className="flex justify-between items-start mb-4">
