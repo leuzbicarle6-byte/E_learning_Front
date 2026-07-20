@@ -24,8 +24,8 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [quizResult, setQuizResult] = useState(null);
 
-  // Chrono de 12 secondes par question
-  const [timeLeft, setTimeLeft] = useState(12);
+  // Chrono de 15 secondes par question
+  const [timeLeft, setTimeLeft] = useState(15);
 
   // Références pour éviter les closures périmées dans les timers
   const currentQuestionIndexRef = useRef(currentQuestionIndex);
@@ -63,7 +63,7 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
 
     if (questions && nextIndex < questions.length) {
       setCurrentQuestionIndex(nextIndex);
-      setTimeLeft(12); // Reset du chrono pour la nouvelle question
+      setTimeLeft(15); // Reset du chrono pour la nouvelle question
     } else {
       executeSubmission(selectedAnswersRef.current);
     }
@@ -101,14 +101,14 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
     setQuizResult(null);
     setCurrentQuestionIndex(0);
     setSelectedAnswers({});
-    setTimeLeft(12);
+    setTimeLeft(15);
   };
 
   const handleRetry = () => {
     setQuizResult(null);
     setCurrentQuestionIndex(0);
     setSelectedAnswers({});
-    setTimeLeft(12);
+    setTimeLeft(15);
   };
 
   if (isLoading) {
@@ -138,7 +138,7 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
         <button
           onClick={() => {
             setIsOpen(true);
-            setTimeLeft(12);
+            setTimeLeft(15);
           }}
           className={`w-full sm:w-auto px-5 py-2.5 font-semibold text-xs rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-98 ${
             isCourseCompleted
@@ -149,7 +149,7 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
           <Award className="w-4 h-4" />
           {isCourseCompleted
             ? "Rejouer le quiz entraînement"
-            : "Passer le quiz chrono (12s/q)"}
+            : "Passer le quiz chrono (15s/q)"}
         </button>
 
         {isCourseCompleted && (
@@ -270,7 +270,7 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
                   <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-indigo-500 transition-all duration-1000 ease-linear"
-                      style={{ width: `${(timeLeft / 12) * 100}%` }}
+                      style={{ width: `${(timeLeft / 15) * 100}%` }}
                     />
                   </div>
 
