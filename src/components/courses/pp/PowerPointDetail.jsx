@@ -1,162 +1,158 @@
 import React, { useState } from "react";
-import { Presentation, MoveRight, Layers, Play, CheckCircle2, Star } from "lucide-react";
+import { ChevronDown, Zap } from "lucide-react";
+// Import des données PowerPoint
+import { courPowerPointDetails } from "./data";
+
+const tagColors = {
+  Indispensable: "bg-indigo-500/20 text-indigo-300 border-indigo-500/40",
+  Navigation: "bg-lime-500/20 text-lime-300 border-lime-500/40",
+  "Mise en valeur": "bg-pink-500/20 text-pink-300 border-pink-500/40",
+  Design: "bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40",
+  "Mise en page": "bg-teal-500/20 text-teal-300 border-teal-500/40",
+  Lisibilité: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+  Finance: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+  Précision: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+  Analyse: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+  Organisation: "bg-orange-500/20 text-orange-300 border-orange-500/40",
+};
+
+function ToolCard({ tool }) {
+  const [open, setOpen] = useState(false);
+  const tagClass =
+    tagColors[tool.tag] ||
+    "bg-indigo-500/20 text-indigo-300 border-indigo-500/40";
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden transition-all hover:border-indigo-400/40">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between gap-3 p-4 text-left"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="shrink-0 h-8 w-8 rounded-lg bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <Zap size={16} className="text-white" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-white font-medium truncate">{tool.name}</p>
+            {tool.shortcut && tool.shortcut !== "N/A" && (
+              <p className="text-xs text-indigo-300/70 font-mono">
+                {tool.shortcut}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className={`text-xs px-2 py-1 rounded-full border ${tagClass}`}>
+            {tool.tag}
+          </span>
+          <ChevronDown
+            size={18}
+            className={`text-gray-400 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </div>
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 pt-1 space-y-3 border-t border-white/10">
+          <p className="text-gray-300 text-sm">{tool.desc}</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div className="rounded-lg bg-black/20 p-3">
+              <p className="text-xs uppercase tracking-wide text-indigo-400 mb-1">
+                Quand l'utiliser
+              </p>
+              <p className="text-sm text-gray-300">{tool.usage}</p>
+            </div>
+            <div className="rounded-lg bg-black/20 p-3">
+              <p className="text-xs uppercase tracking-wide text-purple-400 mb-1">
+                Exemple concret
+              </p>
+              <p className="text-sm text-gray-300">{tool.example}</p>
+            </div>
+          </div>
+          {tool.tip && (
+            <div className="rounded-lg border border-amber-400/20 bg-amber-400/5 p-3">
+              <p className="text-xs uppercase tracking-wide text-amber-400 mb-1">
+                Astuce
+              </p>
+              <p className="text-sm text-amber-100/90">{tool.tip}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TabContent({ tab }) {
+  return (
+    <div className="space-y-8">
+      {tab.image && (
+        <div className="rounded-2xl overflow-hidden border border-white/10 shadow-lg shadow-indigo-950/40">
+          <img
+            src={tab.image}
+            alt={tab.label}
+            className="w-full object-cover"
+          />
+        </div>
+      )}
+
+      <p className="text-gray-300 leading-relaxed">{tab.description}</p>
+
+      <div className="space-y-10">
+        {tab.sections.map((section, i) => (
+          <div key={i}>
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-indigo-400 to-purple-400" />
+              {section.name}
+            </h3>
+            <div className="space-y-3">
+              {section.tools.map((tool, j) => (
+                <ToolCard key={j} tool={tool} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function PowerPointDetail() {
-  const [activeTab, setActiveTab] = useState("slides");
-
-  const tabs = [
-    { id: "slides", label: "1. Structure & Slides", icon: Layers },
-    { id: "animations", label: "2. Animations & Effets", icon: Star },
-    { id: "presenting", label: "3. Le Mode Diaporama", icon: Play },
-  ];
+  const course = courPowerPointDetails[0];
+  const [activeTabId, setActiveTabId] = useState(course.tabs[0].id);
+  const activeTab = course.tabs.find((t) => t.id === activeTabId);
 
   return (
-    <div className="space-y-6">
-      {/* Navigation des Onglets Internes à PowerPoint */}
-      <div className="flex flex-wrap gap-2 p-1 bg-white/5 border border-white/10 rounded-xl">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          return (
+    <div className="min-h-screen bg-linear-to-b from-[#0b0b16] to-[#13111f] text-white">
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            {course.title}
+          </h1>
+          <p className="text-gray-400 mt-2">{course.description}</p>
+        </header>
+
+        {/* Onglets */}
+        <div className="flex flex-wrap gap-2 mb-8 border-b border-white/10 pb-4">
+          {course.tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${
-                activeTab === tab.id
-                  ? "bg-red-500 text-white shadow-lg shadow-red-500/20"
-                  : "text-white/70 hover:text-white hover:bg-white/5"
+              onClick={() => setActiveTabId(tab.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                activeTabId === tab.id
+                  ? "bg-linear-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-900/40"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10"
               }`}
             >
-              <Icon className="w-4 h-4" />
               {tab.label}
             </button>
-          );
-        })}
-      </div>
-
-      {/* Contenu de l'onglet actif */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl space-y-6">
-        {activeTab === "slides" && <PPTSlides />}
-        {activeTab === "animations" && <PPTAnimations />}
-        {activeTab === "presenting" && <PPTPresenting />}
-      </div>
-    </div>
-  );
-}
-
-// --- SOUS-COMPOSANT 1 : STRUCTURE & SLIDES ---
-function PPTSlides() {
-  return (
-    <div className="space-y-4 animate-in fade-in duration-150">
-      <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-        <Layers className="w-6 h-6 text-red-400" />
-        <h3 className="text-lg font-semibold">Gérer les Diapositives (Slides)</h3>
-      </div>
-      <p className="text-sm text-white/70 leading-relaxed">
-        PowerPoint fonctionne par blocs indépendants appelés **diapositives**. Contrairement à Word, le texte ne coule pas automatiquement d'une page à l'autre : vous devez tout organiser manuellement dans des **zones de texte**.
-      </p>
-      
-      <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20 space-y-2 text-xs">
-        <h4 className="font-bold text-red-400 uppercase tracking-wider">La règle d'or du Design (10-20-30) :</h4>
-        <ul className="list-disc pl-4 space-y-1 text-white/80">
-          <li>Pas plus de <strong className="text-white">10 diapositives</strong> par présentation standard.</li>
-          <li>Pas plus de <strong className="text-white">20 minutes</strong> de parole.</li>
-          <li>Une taille de police d'au moins <strong className="text-white">30 points</strong> pour rester lisible de loin.</li>
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-// --- SOUS-COMPOSANT 2 : ANIMATIONS VS TRANSITIONS (INTERACTIF) ---
-function PPTAnimations() {
-  const [triggerAnim, setTriggerAnim] = useState(false);
-  const [triggerTrans, setTriggerTrans] = useState(false);
-
-  return (
-    <div className="space-y-4 animate-in fade-in duration-150">
-      <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-        <Star className="w-6 h-6 text-red-400" />
-        <h3 className="text-lg font-semibold">Animer vos idées sans surcharger</h3>
-      </div>
-      <p className="text-sm text-white/70">
-        Il est crucial de comprendre la différence fondamentale entre ces deux outils :
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
-        <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between">
-          <div>
-            <h4 className="font-bold text-white text-sm mb-1">La Transition</h4>
-            <p className="text-white/60 leading-relaxed">C'est l'effet visuel qui se produit <strong>entre deux diapositives</strong> (le passage de la slide A à la slide B).</p>
-          </div>
-          <button 
-            onClick={() => { setTriggerTrans(true); setTimeout(() => setTriggerTrans(false), 1000); }}
-            className="mt-4 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded font-medium transition-all"
-          >
-            Tester une Transition
-          </button>
+          ))}
         </div>
 
-        <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between">
-          <div>
-            <h4 className="font-bold text-white text-sm mb-1">L'Animation</h4>
-            <p className="text-white/60 leading-relaxed">C'est l'effet appliqué à un <strong>élément précis à l'intérieur</strong> de la diapositive (un titre qui surgit, une image qui zoome).</p>
-          </div>
-          <button 
-            onClick={() => { setTriggerAnim(true); setTimeout(() => setTriggerAnim(false), 1000); }}
-            className="mt-4 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded font-medium transition-all"
-          >
-            Tester une Animation
-          </button>
-        </div>
-      </div>
-
-      {/* Simulateur visuel ultra-simple d'effets */}
-      <div className="p-6 rounded-xl bg-slate-950 border border-white/10 flex items-center justify-center min-h-35 relative overflow-hidden">
-        {triggerTrans && (
-          <div className="absolute inset-0 bg-red-600 animate-out slide-out-to-right duration-1000 z-10 flex items-center justify-center font-mono text-xs text-white">
-            Effet "Balayage" de la Slide...
-          </div>
-        )}
-        
-        <div className={`p-4 bg-white/10 border border-white/15 rounded-lg text-center shadow-lg transition-all duration-500 ${triggerAnim ? "scale-110 border-red-500 text-red-400 rotate-2" : "text-white"}`}>
-          <Presentation className="w-8 h-8 mx-auto mb-2" />
-          <p className="font-mono text-xs font-bold">Élément de la diapositive</p>
-          <p className="text-[10px] text-white/50 font-sans mt-0.5">Regardez l'effet appliqué !</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- SOUS-COMPOSANT 3 : MODE DIAPORAMA ---
-function PPTPresenting() {
-  return (
-    <div className="space-y-4 animate-in fade-in duration-150">
-      <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-        <Play className="w-6 h-6 text-red-400" />
-        <h3 className="text-lg font-semibold">Le Mode Diaporama & Raccourcis</h3>
-      </div>
-      <p className="text-sm text-white/70">
-        Une fois votre présentation prête, c'est le moment de la projeter. Connaître ces astuces évite de chercher ses mots en public.
-      </p>
-
-      <div className="space-y-2.5 text-xs font-sans text-white/80">
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-white/5 border border-white/5">
-          <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 font-mono text-red-400 font-bold min-w-8 text-center">F5</kbd>
-          <span className="flex-1">Lance le diaporama depuis la **toute première** diapositive.</span>
-        </div>
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-white/5 border border-white/5">
-          <div className="flex gap-1">
-            <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 font-mono text-red-400 font-bold">Shift</kbd>
-            <span className="text-white/40 font-mono font-bold text-sm">+</span>
-            <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 font-mono text-red-400 font-bold">F5</kbd>
-          </div>
-          <span className="flex-1">Lance le diaporama à partir de la diapositive **actuelle** (très utile pour tester).</span>
-        </div>
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-white/5 border border-white/5">
-          <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 font-mono text-red-400 font-bold min-w-8 text-center">B</kbd>
-          <span className="flex-1">Affiche un **écran noir** instantané pendant la présentation. Idéal pour capter l'attention de l'auditoire sur vous sans couper le projecteur.</span>
-        </div>
+        {/* Contenu de l'onglet actif */}
+        <TabContent tab={activeTab} />
       </div>
     </div>
   );

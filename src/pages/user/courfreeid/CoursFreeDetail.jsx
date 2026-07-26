@@ -101,19 +101,7 @@ export default function CoursFreeDetail() {
             </h1>
           </div>
           <p className="text-sm text-white/60 pl-11">{cours.description}</p>
-        </div>
-
-        {/* Moteur de Recherche d'Outils */}
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-          <input
-            type="text"
-            placeholder="Rechercher un outil ou raccourci (ex: Gras, Ctrl+S)..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-indigo-500 transition-all"
-          />
-        </div>
+        </div>        
       </div>
 
       {/* Navigation des Onglets du Ruban */}
@@ -145,7 +133,7 @@ export default function CoursFreeDetail() {
         <div className="space-y-8">
 
           {/* Banner Description Onglet */}
-          <div className="bg-gradient-to-r from-indigo-900/30 via-slate-900 to-indigo-900/20 border border-indigo-500/20 rounded-2xl p-6 relative overflow-hidden">
+          <div className="bg-linear-to-r from-indigo-900/30 via-slate-900 to-indigo-900/20 border border-indigo-500/20 rounded-2xl p-6 relative overflow-hidden">
             <div className="flex items-start gap-4">
               <span className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                 <Sparkles className="w-6 h-6" />
@@ -184,133 +172,7 @@ export default function CoursFreeDetail() {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* GROUPES D'OUTILS — Une carte structurée par section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {activeTabData.sections?.map((section, idx) => {
-              const filteredTools = filterTools(section.tools);
-
-              if (filteredTools.length === 0) return null;
-
-              return (
-                <div
-                  key={idx}
-                  className="rounded-2xl bg-white/[0.03] border border-white/5 overflow-hidden flex flex-col justify-start"
-                >
-                  {/* En-tête du groupe */}
-                  <div className="flex items-center gap-3 px-5 py-3.5 bg-white/[0.03] border-b border-white/5">
-                    <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                    <h3 className="text-sm font-bold text-white tracking-wide">
-                      {section.name}
-                    </h3>
-                  </div>
-
-                  {/* Liste des outils du groupe */}
-                  <div className="divide-y divide-white/5">
-                    {filteredTools.map((tool, tIdx) => {
-                      const toolKey = `${activeTabId}-${idx}-${tIdx}-${tool.name}`;
-                      const isExpanded = expandedTools.has(toolKey);
-                      const hasDetails = tool.usage || tool.example || tool.tip || (tool.shortcut && tool.shortcut !== "N/A");
-                      const badge = getBadgeLabel(tool);
-
-                      return (
-                        <div key={tIdx} className="group">
-                          <button
-                            onClick={() => hasDetails && toggleTool(toolKey)}
-                            className={`w-full flex items-center gap-3 px-5 py-3 text-left transition-colors ${
-                              hasDetails ? "hover:bg-white/[0.04] cursor-pointer" : "cursor-default"
-                            }`}
-                          >
-                            {/* Badge visuel stylisé */}
-                            <span className="shrink-0 min-w-[2.5rem] h-9 px-2 flex items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-bold text-[11px] font-mono">
-                              {badge}
-                            </span>
-
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-semibold text-sm text-white">
-                                  {tool.name}
-                                </span>
-                                {tool.tag && (
-                                  <span className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                                    {tool.tag}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs text-white/60 leading-relaxed mt-0.5">
-                                {tool.desc}
-                              </p>
-                            </div>
-
-                            {hasDetails && (
-                              <ChevronDown
-                                className={`w-4 h-4 text-white/30 shrink-0 transition-transform duration-200 ${
-                                  isExpanded ? "rotate-180" : ""
-                                }`}
-                              />
-                            )}
-                          </button>
-
-                          {/* Zone de détails pédagogiques dépliable */}
-                          {isExpanded && hasDetails && (
-                            <div className="px-5 pb-4 pl-[4rem] space-y-2.5 animate-in fade-in duration-200 bg-white/[0.01]">
-                              {tool.usage && (
-                                <div className="flex gap-2 items-start">
-                                  <Target className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                                  <p className="text-[11px] text-white/70 leading-relaxed">
-                                    <span className="text-emerald-400 font-semibold">
-                                      Quand l'utiliser :{" "}
-                                    </span>
-                                    {tool.usage}
-                                  </p>
-                                </div>
-                              )}
-                              
-                              {tool.example && (
-                                <div className="flex gap-2 items-start">
-                                  <MessageSquareText className="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
-                                  <p className="text-[11px] text-white/70 leading-relaxed">
-                                    <span className="text-sky-400 font-semibold">
-                                      Exemple :{" "}
-                                    </span>
-                                    {tool.example}
-                                  </p>
-                                </div>
-                              )}
-
-                              {tool.tip && (
-                                <div className="flex gap-2 items-start">
-                                  <Lightbulb className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                                  <p className="text-[11px] text-white/70 leading-relaxed">
-                                    <span className="text-amber-400 font-semibold">
-                                      Astuce :{" "}
-                                    </span>
-                                    {tool.tip}
-                                  </p>
-                                </div>
-                              )}
-
-                              {tool.shortcut && tool.shortcut !== "N/A" && (
-                                <div className="flex items-center gap-2 pt-1">
-                                  <Command className="w-3.5 h-3.5 text-white/40 shrink-0" />
-                                  <span className="text-[10px] text-white/50">Raccourci :</span>
-                                  <kbd className="px-2 py-0.5 rounded-md bg-white/10 text-white font-mono font-bold text-[10px] border border-white/10">
-                                    {tool.shortcut}
-                                  </kbd>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
+          </div>          
         </div>
       )}
     </div>

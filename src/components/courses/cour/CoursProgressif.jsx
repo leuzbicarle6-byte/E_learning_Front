@@ -6,6 +6,7 @@ import {
   BarChart3,
   GraduationCap,
   Cpu,
+  CheckCircle2, // Ajout d'une icône pour valoriser les cours terminés
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -55,7 +56,7 @@ export default function CoursProgressif({ coursesArray }) {
   }, {});
 
   const currentActiveCourse = processedCourses.find(
-    (c) => !c.isLockedClient && c.user_progress < 100,
+    (c) => !c.isLockedClient && c.user_progress < 100
   );
 
   return (
@@ -86,67 +87,89 @@ export default function CoursProgressif({ coursesArray }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categoryCourses.map((cours) => (
-              <div
-                key={cours.id}
-                className={`relative rounded-2xl border p-5 flex flex-col justify-between h-64 transition-all duration-300 bg-white/5 ${
-                  cours.isLockedClient
-                    ? "border-white/5 opacity-40 select-none"
-                    : "border-white/10 hover:border-indigo-500/30 hover:bg-white/10 shadow-xl shadow-black/20"
-                }`}
-              >
-                <div className="space-y-3">
-                  <h3 className="font-bold text-white text-base tracking-tight line-clamp-1">
-                    {cours.title}
-                  </h3>
-                  <p className="text-xs text-white/40 line-clamp-4 leading-relaxed">
-                    {cours.description}
-                  </p>
-                </div>
+            {categoryCourses.map((cours) => {
+              const isCompleted = cours.user_progress === 100;
 
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                  {cours.isLockedClient ? (
-                    <div className="flex items-center gap-2 text-xs font-medium text-white/30">
-                      <Lock className="w-3.5 h-3.5" /> Verrouillé
+              return (
+                <div
+                  key={cours.id}
+                  className={`relative rounded-2xl border p-5 flex flex-col justify-between h-64 transition-all duration-300 bg-white/5 ${
+                    cours.isLockedClient
+                      ? "border-white/5 opacity-40 select-none"
+                      : isCompleted
+                      ? "border-emerald-500/50 bg-emerald-500/5 hover:border-emerald-500 hover:bg-emerald-500/10 shadow-lg shadow-emerald-500/10"
+                      : "border-white/10 hover:border-indigo-500/30 hover:bg-white/10 shadow-xl shadow-black/20"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-bold text-white text-base tracking-tight line-clamp-1">
+                        {cours.title}
+                      </h3>
+                      {/* Badge pour indiquer visuellement le cours terminé */}
+                      {isCompleted && (
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                      )}
                     </div>
-                  ) : (
-                    <>
-                      <div>
-                        <span className="block text-[9px] text-white/40 uppercase font-mono">
-                          Progression
+                    <p className="text-xs text-white/40 line-clamp-4 leading-relaxed">
+                      {cours.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                    {cours.isLockedClient ? (
+                      <div className="flex items-center gap-2 text-xs font-medium text-white/30">
+                        <Lock className="w-3.5 h-3.5" /> Verrouillé
+                      </div>
+                    ) : (
+                      <>
+                        <div>
+                          <span className="block text-[9px] text-white/40 uppercase font-mono">
+                            Progression
+                          </span>
+                          <span
+                            className={`text-xs font-bold ${
+                              isCompleted
+                                ? "text-emerald-400"
+                                : "text-indigo-400"
+                            }`}
+                          >
+                            {cours.user_progress || 0}%
+                          </span>
+                        </div>
+                        <Link
+                          to={`/user/courses/${cours.id}`}
+                          className={`flex items-center gap-1.5 p-2 px-4 rounded-xl text-xs font-semibold text-white transition-colors ${
+                            isCompleted
+                              ? "bg-emerald-600 hover:bg-emerald-500"
+                              : "bg-indigo-600 hover:bg-indigo-500"
+                          }`}
+                        >
+                          {isCompleted ? "Revoir" : "Lancer"}{" "}
+                          <Play className="w-2.5 h-2.5 fill-white text-white" />
+                        </Link>
+                      </>
+                    )}
+                  </div>
+
+                  {cours.isLockedClient && (
+                    <div className="absolute inset-0 bg-[#050816]/30 backdrop-blur-xs rounded-2xl flex items-center justify-center p-4">
+                      <div className="flex flex-col items-center text-center gap-1.5 p-3 rounded-xl bg-slate-950/95 border border-white/5 text-white">
+                        <Lock className="w-4 h-4 text-purple-400" />
+                        <span className="text-[9px] font-bold tracking-wider uppercase text-white/40">
+                          Bloqué : Termine d'abord
                         </span>
-                        <span className="text-xs font-bold text-indigo-400">
-                          {cours.user_progress || 0}%
+                        <span className="text-xs font-bold text-indigo-300 line-clamp-1">
+                          {cours.previousCourseGlobal
+                            ? cours.previousCourseGlobal.title
+                            : "le cours précédent"}
                         </span>
                       </div>
-                      <Link
-                        to={`/user/courses/${cours.id}`}
-                        className="flex items-center gap-1.5 p-2 px-4 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-500"
-                      >
-                        Lancer{" "}
-                        <Play className="w-2.5 h-2.5 fill-white text-white" />
-                      </Link>
-                    </>
+                    </div>
                   )}
                 </div>
-
-                {cours.isLockedClient && (
-                  <div className="absolute inset-0 bg-[#050816]/30 backdrop-blur-xs rounded-2xl flex items-center justify-center p-4">
-                    <div className="flex flex-col items-center text-center gap-1.5 p-3 rounded-xl bg-slate-950/95 border border-white/5 text-white">
-                      <Lock className="w-4 h-4 text-purple-400" />
-                      <span className="text-[9px] font-bold tracking-wider uppercase text-white/40">
-                        Bloqué : Termine d'abord
-                      </span>
-                      <span className="text-xs font-bold text-indigo-300 line-clamp-1">
-                        {cours.previousCourseGlobal
-                          ? cours.previousCourseGlobal.title
-                          : "le cours précédent"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ))}

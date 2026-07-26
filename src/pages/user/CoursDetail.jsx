@@ -153,29 +153,30 @@ export default function CoursDetail() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6 text-white space-y-6 animate-in fade-in duration-200">
+    <div className="max-w-350 mx-auto p-4 md:p-8 text-white space-y-8 animate-in fade-in duration-200">
       <CourseHeader
         user={user}
         title={realCourse.title}
         category={realCourse.category}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">{renderCourseContent()}</div>
-        <div className="space-y-4">
-          <CourseSidebar
-            localProgress={localProgress}
-            isSaving={isSaving}
-            isLastCourse={isLastCourse}
-          />
-        </div>
+      {/* Contenu du cours en pleine largeur */}
+      <div className="w-full min-w-0">{renderCourseContent()}</div>
+
+      {/* Sidebar déplacée sous le contenu, en barre horizontale */}
+      <div className="w-full">
+        <CourseSidebar
+          localProgress={localProgress}
+          isSaving={isSaving}
+          isLastCourse={isLastCourse}
+        />
       </div>
 
       {/* BLOC QUIZ / COMPTE À REBOURS */}
-      <div className="mt-8">
+      <div className="pt-2 border-t border-white/10">
         {isQuizUnlocked ? (
           <div
-            className={`p-6 rounded-2xl border transition-all ${
+            className={`mt-6 p-6 rounded-2xl border transition-all ${
               localProgress === 100
                 ? "bg-emerald-500/5 border-emerald-500/20"
                 : "bg-indigo-500/5 border-indigo-500/20"
@@ -216,7 +217,7 @@ export default function CoursDetail() {
             </div>
           </div>
         ) : (
-          <div className="p-8 rounded-2xl border border-dashed border-white/10 bg-white/5 flex flex-col items-center text-center space-y-4">
+          <div className="mt-6 p-8 rounded-2xl border border-dashed border-white/10 bg-white/5 flex flex-col items-center text-center space-y-4">
             <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
               <Lock className="w-5 h-5" />
             </div>

@@ -1,6 +1,14 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, LogOut, X, List, FileCheck } from "lucide-react";
+import {
+  LayoutDashboard,
+  User,
+  LogOut,
+  X,
+  List,
+  FileCheck,
+  ListCheck,
+} from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../backend/features/auth/authSlice"; // Ajuste le chemin
 
@@ -18,6 +26,11 @@ export default function SidebarUser({ isOpen, setIsOpen }) {
       name: "Les Cours",
       path: "/user/courses",
       icon: <List className="w-5 h-5" />,
+    },
+    {
+      name: "S'entrener",
+      path: "/user/learn",
+      icon: <ListCheck className="w-5 h-5 text-purple-500" />,
     },
     {
       name: "Exercices",
