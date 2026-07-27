@@ -28,11 +28,6 @@ export default function SidebarUser({ isOpen, setIsOpen }) {
       icon: <List className="w-5 h-5" />,
     },
     {
-      name: "S'entrener",
-      path: "/user/learn",
-      icon: <ListCheck className="w-5 h-5 text-purple-500" />,
-    },
-    {
       name: "Exercices",
       path: "/user/exercices",
       icon: <FileCheck className="w-5 h-5" />,

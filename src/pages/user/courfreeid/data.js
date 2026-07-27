@@ -14,6 +14,13 @@ import InsertionImgEx from "./images/Ex-Insertion.png";
 import FormulesImgEx from "./images/Ex-Formule.png";
 import MiseEnPageImgEx from "./images/Ex-MiseEnPage.png";
 
+// PowerPoint
+import Ficher_pp from "./images/FichierPp.png";
+import Acceuil_pp from "./images/AcceuilPp.png";
+import Animation_pp from "./images/Animation.png";
+import Conception_pp from "./images/conception.png";
+import Transitions_pp from "./images/Transition.png";
+
 export const courfreedtails = [
   {
     id: 1,
@@ -119,6 +126,49 @@ export const courfreedtails = [
         image: FormulesImgEx,
         description:
           "L'onglet Formules regroupe tous les outils pour créer, gérer et vérifier les formules afin d'effectuer des calculs et d'analyser tes données.",
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: "Guide Complet PowerPoint",
+    description:
+      "Découvrez en détail les fonctionnalités de chaque onglet de PowerPoint avec des visuels clairs, des explications pratiques et des astuces.",
+    tabs: [
+      {
+        id: "ecran-accueil",
+        label: "Écran d'accueil",
+        image: Ficher_pp,
+        description:
+          "L'écran d'accueil vous permet de démarrer rapidement une présentation, de retrouver vos fichiers récents et d'accéder aux paramètres généraux.",
+      },
+      {
+        id: "onglet-accueil",
+        label: "Accueil",
+        image: Acceuil_pp,
+        description:
+          "L'onglet Accueil regroupe les commandes de base les plus utilisées au quotidien pour la création et la mise en forme.",
+      },
+      {
+        id: "onglet-conception",
+        label: "Conception",
+        image: Conception_pp,
+        description:
+          "Définissez le style visuel global de votre présentation : thèmes, jeux de couleurs et formats de diapositives.",
+      },
+      {
+        id: "onglet-transitions",
+        label: "Transitions",
+        image: Transitions_pp,
+        description:
+          "Ajoutez des effets visuels lors du passage d'une diapositive à la suivante et gérez le minutage du diaporama.",
+      },
+      {
+        id: "onglet-animations",
+        label: "Animations",
+        image: Animation_pp,
+        description:
+          "Animez les éléments individuels (textes, images, formes) de vos diapositives pour rythmer votre discours.",
       },
     ],
   },

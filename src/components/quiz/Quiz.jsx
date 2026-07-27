@@ -231,7 +231,7 @@ export default function Quiz({ id, onQuizPassed, isCourseCompleted }) {
                     </div>
 
                     {quizResult.passed && quizResult.xp_gagnes > 0 && (
-                      <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs px-3 py-2 rounded-lg shadow-lg shadow-orange-500/20 whitespace-nowrap animate-pulse">
+                      <div className="bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs px-3 py-2 rounded-lg shadow-lg shadow-orange-500/20 whitespace-nowrap animate-pulse">
                         + {quizResult.xp_gagnes} XP ⚡
                       </div>
                     )}

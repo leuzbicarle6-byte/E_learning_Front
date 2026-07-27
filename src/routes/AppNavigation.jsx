@@ -5,14 +5,14 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// Importation de la protection de route séparée
+// l'import de la protection de route
 import ProtectedRoute from "./ProtectedRoute";
 
-// Importation de tes Layouts
+// les imports de mes Layouts
 import LayoutUser from "../Layouts/LayoutUser";
 import LayoutAdmin from "../Layouts/LayoutAdmin";
 
-// Importation de tes listes de routes (tableaux d'objets)
+// les imports de mes routes
 import PublicRoutes from "./PublicRoutes";
 import UserRoutes from "./UserRoutes";
 import AdminRoutes from "./AdminRoutes";
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  // 2. Espace Utilisateur (Protégé)
+  // 2. Fi partie User et Admin (genre admin peut acceder ici)
   {
     path: "/user",
     element: (
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  // 3. Espace Admin (Strictement réservé aux Admins)
+  // 3. Fi partie Admin la
   {
     path: "/admin",
     element: (
@@ -55,7 +55,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  // 4. Gestion des erreurs 404 / Routes inconnues
+  // 4. fi route 404 not found 
   {
     path: "*",
     element: <NotFound />,

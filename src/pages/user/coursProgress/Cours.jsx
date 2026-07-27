@@ -1,16 +1,16 @@
 import React from "react";
-import { useGetCoursesQuery } from "../../backend/features/courses/coursesApi";
+import { useGetCoursesQuery } from "../../../backend/features/courses/coursesApi";
 import { Loader2, AlertCircle, Award, BookOpen } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
-import CoursProgressif from "../../components/courses/cour/CoursProgressif";
-import CoursGratuit from "../../components/courses/cour/CoursGratuit";
+import CoursProgressif from "../../../components/courses/cour/CoursProgressif";
+import CoursGratuit from "../../../components/courses/cour/CoursGratuit";
 
 export default function Cours() {
   const { data: listeCours, isLoading, isError, error } = useGetCoursesQuery();
 
   // Utilisation de useSearchParams au lieu de useState
   const [searchParams] = useSearchParams();
-  const activeTab = searchParams.get("tab") || "progressif";
+  const activeTab = searchParams.get("tab") || "gratuit";
 
   const coursesArray = Array.isArray(listeCours)
     ? listeCours
@@ -54,18 +54,6 @@ export default function Cours() {
         {/* Navigation avec des composants Link */}
         <div className="flex p-1 space-x-1 bg-white/5 rounded-xl max-w-md border border-white/5">
           <Link
-            to="?tab=progressif"
-            className={`flex items-center justify-center gap-2 w-full py-2.5 text-xs font-semibold rounded-lg transition-all ${
-              activeTab === "progressif"
-                ? "bg-indigo-600 text-white shadow"
-                : "text-white/60 hover:text-white hover:bg-white/5"
-            }`}
-          >
-            <Award className="w-4 h-4" />
-            Parcours Progressif
-          </Link>
-
-          <Link
             to="?tab=gratuit"
             className={`flex items-center justify-center gap-2 w-full py-2.5 text-xs font-semibold rounded-lg transition-all ${
               activeTab === "gratuit"
@@ -76,15 +64,26 @@ export default function Cours() {
             <BookOpen className="w-4 h-4" />
             Cours Libres / Gratuits
           </Link>
+          <Link
+            to="?tab=progressif"
+            className={`flex items-center justify-center gap-2 w-full py-2.5 text-xs font-semibold rounded-lg transition-all ${
+              activeTab === "progressif"
+                ? "bg-indigo-600 text-white shadow"
+                : "text-white/60 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Award className="w-4 h-4" />
+            Parcours Progressif
+          </Link>
         </div>
       </div>
 
       {/* Rendu dynamique */}
       <div className="mt-6">
-        {activeTab === "progressif" ? (
-          <CoursProgressif coursesArray={coursProgressifs} />
-        ) : (
+        {activeTab === "gratuit" ? (
           <CoursGratuit coursesArray={coursGratuits} />
+        ) : (
+          <CoursProgressif coursesArray={coursProgressifs} />
         )}
       </div>
     </div>

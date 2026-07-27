@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { courfreedtails } from "./data";
 import {
   ArrowLeft,
@@ -12,7 +12,7 @@ import {
   Target,
   MessageSquareText,
   Lightbulb,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 
 // Génère un badge court et lisible pour un outil (ex: "G" pour Gras, "F12" pour Enregistrer sous, "N" pour Nouveau)
@@ -25,7 +25,7 @@ function getBadgeLabel(tool) {
 
   const cleaned = tool.name.split("(")[0].split("/")[0].trim();
   const words = cleaned.split(" ").filter(Boolean);
-  
+
   if (words.length === 1) {
     return words[0].slice(0, 2).toUpperCase();
   }
@@ -41,8 +41,12 @@ export default function CoursFreeDetail() {
   const { id } = useParams();
   const cours = courfreedtails.find((item) => item.id === Number(id));
 
+  const navigate = useNavigate();
+
   // Sélectionne par défaut le tout premier onglet disponible dans les données (ex: 'fichier')
-  const [activeTabId, setActiveTabId] = useState(cours?.tabs?.[0]?.id || "fichier");
+  const [activeTabId, setActiveTabId] = useState(
+    cours?.tabs?.[0]?.id || "fichier",
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedTools, setExpandedTools] = useState(() => new Set());
 
@@ -50,14 +54,18 @@ export default function CoursFreeDetail() {
     return (
       <div className="p-8 text-center text-white space-y-4">
         <h2 className="text-2xl font-bold">Cours non trouvé</h2>
-        <Link to="/cours" className="text-indigo-400 underline inline-block">
+        <Link
+          to={navigate(-1)}
+          className="text-indigo-400 underline inline-block"
+        >
           Retour au catalogue
         </Link>
       </div>
     );
   }
 
-  const activeTabData = cours.tabs?.find((t) => t.id === activeTabId) || cours.tabs?.[0];
+  const activeTabData =
+    cours.tabs?.find((t) => t.id === activeTabId) || cours.tabs?.[0];
 
   const filterTools = (tools) => {
     if (!searchTerm.trim()) return tools;
@@ -67,7 +75,7 @@ export default function CoursFreeDetail() {
         tool.name.toLowerCase().includes(term) ||
         tool.desc.toLowerCase().includes(term) ||
         (tool.tag && tool.tag.toLowerCase().includes(term)) ||
-        (tool.shortcut && tool.shortcut.toLowerCase().includes(term))
+        (tool.shortcut && tool.shortcut.toLowerCase().includes(term)),
     );
   };
 
@@ -85,13 +93,12 @@ export default function CoursFreeDetail() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-300">
-
       {/* En-tête du Cours */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <Link
-              to="/cours"
+              to={"/user/courses?tab=gratuit"}
               className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all border border-white/5"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -101,7 +108,7 @@ export default function CoursFreeDetail() {
             </h1>
           </div>
           <p className="text-sm text-white/60 pl-11">{cours.description}</p>
-        </div>        
+        </div>
       </div>
 
       {/* Navigation des Onglets du Ruban */}
@@ -131,7 +138,6 @@ export default function CoursFreeDetail() {
       {/* Zone de Contenu Principale */}
       {activeTabData && (
         <div className="space-y-8">
-
           {/* Banner Description Onglet */}
           <div className="bg-linear-to-r from-indigo-900/30 via-slate-900 to-indigo-900/20 border border-indigo-500/20 rounded-2xl p-6 relative overflow-hidden">
             <div className="flex items-start gap-4">
@@ -168,11 +174,14 @@ export default function CoursFreeDetail() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-white/40 space-y-2">
                   <HelpCircle className="w-10 h-10 stroke-1" />
-                  <p className="text-sm">Capture visuelle indisponible pour l'onglet {activeTabData.label}</p>
+                  <p className="text-sm">
+                    Capture visuelle indisponible pour l'onglet{" "}
+                    {activeTabData.label}
+                  </p>
                 </div>
               )}
             </div>
-          </div>          
+          </div>
         </div>
       )}
     </div>
